@@ -1,0 +1,85 @@
+.about {
+    width: 100%;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 50px;
+}
+
+.about > .left {
+    display: inline-block;
+    width: 50%;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.about > .left > .img {
+    height: 600px;
+    width: auto;
+    max-width: 90%;
+    border-radius: 20px;    
+    border: 4px solid black;
+}
+
+.about > .right {
+    display: inline-block;
+    width: 50%;
+}
+
+.about > .right > .aboutData > .aboutTitle {
+    font-weight: 600;
+    font-size: 40px;
+    color: #ff7700;
+}
+
+.about > .right > .aboutData {
+    width: 70%;
+}
+
+.about > .right > .aboutData> div > .aboutParagraph {
+    padding-top: 10px;
+    text-align: left;
+    font-size: 20px;
+}
+
+@media only screen and (max-width: 1000px) {
+    .about {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .about > .left,
+    .about > .right {
+        width: 100%;
+    }
+
+    .about > .right {
+        order: -1;
+    }
+    .about > .right > .aboutTitle {
+        padding-right: 0;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .about > .right > .aboutData {
+        width: 90%;
+        margin: auto;
+        text-align: center;
+        padding-bottom: 20px;
+    }
+
+    .about > .right > .aboutData > .aboutParagraph {
+        text-align: left; 
+        /* margin: auto; */
+    }
+}
+@media only screen and (max-width: 600px) {
+    .about > .right > .aboutData > .aboutTitle {
+        font-size: 24px;
+    }
+    .about > .right > .aboutData > .aboutParagraph {
+        font-size: 16px;
+    }
+}

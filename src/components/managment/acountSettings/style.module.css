@@ -1,0 +1,93 @@
+.accountSettings {
+  height: calc(100vh - 288px);
+  max-width: 900px;
+  width: 90%;
+  margin: auto;
+}
+
+.left, .right {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.input:hover, .input:active, .input:focus {
+  border-color: #e65c00;
+}
+
+.primaryButton {
+  color: #ff7700;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: color 0.3s;
+}
+
+.primaryButton:hover, .primaryButton:focus , .primaryButton:active{
+  color: #e65c00 !important;
+}
+
+.changeButton {
+  background-color: #ff7700;
+  border-color: #ff7700;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.changeButton:hover, .changeButton:focus , .changeButton:active{
+  background-color: #e65c00 !important;
+  border-color: #e65c00 !important;
+  outline: none;
+  box-shadow: none;
+}
+
+@media (max-width: 600px) {
+  .accountSettings {
+    height: auto;
+    padding: 10px;
+  }
+
+  .left, .right {
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .h3 {
+    font-size: 16px;
+  }
+
+  .primaryButton, .changeButton {
+    width: 100%;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .accountSettings {
+    width: 80%;
+  }
+
+  .left, .right {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .h3 {
+    font-size: 17px;
+  }
+
+  .primaryButton, .changeButton {
+    width: auto;
+  }
+}

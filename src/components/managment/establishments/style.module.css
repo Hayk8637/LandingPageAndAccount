@@ -1,0 +1,122 @@
+.main {
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  min-height: calc(100vh - 384px);
+}
+
+.items {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 25px;
+  width: 100%;
+  overflow: hidden; 
+  justify-content: flex-start; 
+}
+
+.establishmentContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+.establishmentContainer > .link {
+  width: 100%;
+  height: 100%;
+}
+
+.establishmentButton {
+  border: none;
+  background: transparent;
+  width: 100%;
+  height: 100%;
+}
+
+.editButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #fff;
+  border: none;
+  width: auto;
+  height: auto;
+  z-index: 1;
+}
+
+.addEstablishments {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 221.78px;
+  height: 221.78px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  padding: 10px;
+}
+
+.addEstablishments:hover,
+.addEstablishments:focus,
+.addEstablishments:active {
+  background-color: #e0e0e0;  
+  border-color: #ff7700 !important;   
+  color: #ff7700 !important;             
+  cursor: pointer;            
+}
+
+.icons {
+  font-size: 40px;
+  color: #ff7700;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 150px;
+  height: 100px;
+}
+.editButtons {
+  display: block;
+  margin-top: 10px;
+  width: 100px;
+}
+.logoImage {
+  width: 100%;
+  height: auto; /* Adjusts height to maintain aspect ratio */
+  display: block; /* Prevents extra space below the image */
+}
+
+.qrlink {
+  text-align: center;
+  margin: auto;
+}
+.qrlink > .qr {
+  margin: auto;
+}
+.qrlink > .qr > .qrcode{
+  width: 200px;
+  margin: auto;
+}
+.qrlink > .link {
+  width: 80%;
+  margin: auto;
+  text-align: center;
+}
+.qrlink > .link > .qrlinkbutton {
+  margin: auto;
+  margin-top: 10px;
+  text-align: center;
+  display: block;
+}

@@ -1,0 +1,64 @@
+
+.serviceInclude {
+    height: auto;
+}
+.serviceIncludeItems {
+    margin: 0;
+    padding: 0;
+    width: 1000px;
+    max-width: 95%;
+    margin: auto;
+    display: flex;
+    justify-content:center;
+}
+.serviceInclude > h1 {
+    text-align: center;
+    display: block;
+    color: #FF7800;
+}
+
+.serviceIncludeItems > .left, .right {
+    width: 500px;
+    /* height: 900px; */
+    display: inline-block;
+    margin: auto;
+    max-width: 100%;
+}
+
+.serviceIncludeItems > div > .item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.serviceIncludeItems > div > .item > .icon {
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    color: #FF7800;  
+}
+
+.serviceIncludeItems > div > .item > .text {
+    width: calc(100% - 50px);
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+}
+.serviceIncludeItems > div > .item > .text > p {
+    margin: 10px 0;
+}
+
+@media (max-width: 1000px) {
+    .serviceIncludeItems {
+        flex-direction: column;
+    }
+    
+    .serviceIncludeItems > .left, 
+    .serviceIncludeItems > .right {
+        width: 500px;
+        height: auto; 
+        display: block;
+        margin-bottom: 20px; 
+    }
+}

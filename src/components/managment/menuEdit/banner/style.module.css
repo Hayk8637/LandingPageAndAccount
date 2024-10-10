@@ -1,0 +1,52 @@
+.banner {
+    padding-top: 105px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.bannerCarousel {
+    padding: 15px;
+    width: 100%;
+}
+
+.carouselItem {
+    height: 200px;
+    border-radius: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    color: #fff;
+}
+
+.carouselImage {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 22px;
+}
+
+.editButton {
+    float: right;
+    margin: 13px;
+    z-index: 1;
+    color: white;
+    font-size: 22px;
+    transition: color 0.3s ease;
+}
+
+.editButtonA {
+    position: absolute; 
+    top: 20px; 
+    right: 15px; 
+    z-index: 1;
+    color: #ff7700;
+    font-size: 22px;
+    transition: color 0.3s ease;
+}
+
+
+.editButton:hover, .editButton:active, .editButton:focus, .editButtonA:hover, .editButtonA:active, .editButtonA:focus {
+    color: #e65c00 !important;
+}

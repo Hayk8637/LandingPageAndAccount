@@ -1,0 +1,127 @@
+{
+    "About": "About",
+    "AboutApp": {
+      "-O7It_g59ClNl3VMsBqw": {
+        "description": "Easy Management: \nFlexible and dynamic control, right from your phone"
+      },
+      "-O7Ity8Gc8CfE6dXB5CC": {
+        "description": "Always Upgrading: \nRegular updates to keep you on top"
+      },
+      "-O7Ity8Gc8CfE6dXB5CB": {
+        "description": "Take Your Business Higher: \nUpgrade to smart QR menus for a modern touch."
+      }
+    },
+    "Anunexpectederroroccurred": "An unexpected error occurred.",
+    "BECOMEAPartner": "Became a Partner",
+    "Changepassword": "Change password",
+    "Confirmemail": "Confirm email",
+    "Email": "Email",
+    "EmailVerified": "Email Verified",
+    "Enternewpassword": "Enter new password",
+    "Enteryouremail": "Enter your email...",
+    "ErrorSendingEmail": "Error Sending Email",
+    "ErrorUpdatingPassword": "Error Updating Password",
+    "Errorcreatinguser:": "Error creating user:",
+    "Errorsendingpasswordresetemail:": "Error sending password reset email:",
+    "ErrorsigningupwithGoogle:": "Error signing up with Google:",
+    "Faq": {
+      "-O3S8D-ic90na1ULHtiK": {
+        "answer": "Our digital QR code menu is contactless and it’s always \"on the table\". Guests don’t have to wait for the waiter to bring them a menu or search for the menu on their own. The less waiting time and actions needed to make an order, the more orders will be made.\n\nPaper menus can’t be edited, there is no way to create promotions and discounts quickly.\n\nTo maintain the relevance and presentable look of a paper menu, it has to be reprinted from time to time.",
+        "order": 1,
+        "question": " I already have menus made of paper, why is your digital menu better? "
+      },
+      "-O3SN80hcSwKp8IDvdCY": {
+        "answer": "The PDF file is not interactive. It inherits all the disadvantages of a paper menu. Your QR code menu looks like a text based price list, and not like a modern store page that is made to increase your sales.  You cannot add photos and descriptions for every item to the PDF menu, it will immediately become huge and unreadable.  When you scan QR code of a PDF menu, you need to download it to your phone, which can be problematic with low Internet connection speed or if your guests just don't like to download anything to their phones.  PDF menus, once again, cannot be quickly edited. You have a new type of cheesecake? Now you have to redo the entire PDF and re-upload it to your hosting. In our digital menu, a similar operation takes 20 seconds and is easily performed even with your Android or iPhone.",
+        "question": " I already have a QR code menu with a PDF file, how is your digital menu different from this? "
+      },
+      "-O3SWJz5H6E1JQT_0j90": {
+        "answer": "No, you don’t have to. You can edit your QR code menu whenever you want. We have designed an administrator interface that makes it easy to edit your menu from both desktop and mobile devices.\n\nWe can also give your employees access to your digital menu so that they were able to keep it up to date on their own, without any action from you.",
+        "question": " Do I have to call or to message you every time when I want to change something at my QR code menu? "
+      },
+      "-O3SWneUjo_0GUNVWGRb": {
+        "answer": "We have a demo version of a guest menu. You can see it here: QR code menu example\n\nYou can also look at the administrator's design of the menu and try all the features for free, by creating an account here: Create QR code menu",
+        "question": " Where can I see what your QR code menu looks like? "
+      },
+      "-O3SXCbrtUCYxGP_K8NH": {
+        "answer": "Of course. You can try our digital menu service first, and then decide, does it suits your business or not. To try it you don’t need to add your credit card info or pay for a subscription. Our QR code menu is free of charge for a full month.\n\nAll you need to do is to create an account and we will automatically add a free month for you.",
+        "question": " Is it possible to try your digital menu for free first? "
+      },
+      "-O3SXg-qT0p-VTcBGsqk": {
+        "answer": "Your old QR codes will work if you change the name of your restaurant, cafe or bar. Or if you will change anything else in your digital menu.\n\nEven the link, leading to your digital menu, can be changed at any time, and the old QR code will still work.",
+        "question": " I want to change the name of my restaurant, cafe or bar, but I don’t want to print new QR codes for the menu, what should I do? "
+      }
+    },
+    "GOTOMENU": "GO TO MENU",
+    "Googlesign-infailed:": "Google sign-in failed:",
+    "Mailconfirmed": "Mail confirmed",
+    "MostPopularItems": "Most Popular Items",
+    "NewPassword": "New Password",
+    "PARTNERS": "PARTNERS",
+    "PasswordUpdated": "Password Updated",
+    "Passwordsdonotmatch": "Passwords do not match!",
+    "Pleasecheckyouremailfortheverificationlink": "Please check your email for the verification link.",
+    "Pleaseconfirmyourpassword!": "Please confirm your password!",
+    "Pleaseinputyouremail!": "Please input your email!",
+    "Pleaseinputyourpassword!": "Please input your password!",
+    "Pleasere-enteryourpassword": "Please re-enter your password",
+    "Pleasewriteyouremail": "Please write your email.",
+    "Registrationsuccessful!": "Registration successful! Please check your email to verify your account.",
+    "Send": "Send",
+    "SendResetLink": "Send Reset Link",
+    "ServiceInclude": {
+      "-O6R_C14dZ1jmA5BpCzH": {
+        "include": "QR Menu which is accessible by the link in mobile and desktop."
+      },
+      "-O6Ra3cG_wsI8FY_5r3L": {
+        "include": "Access by scanning QR code, generated inside the service"
+      },
+      "-O6S83tNRKOUzuy1dtin": {
+        "include": "Unlimited amount of menu categories and items in it"
+      },
+      "-O6S8Ch3ht0lZm6QORQu": {
+        "include": "Unlimited count of photos and description text for items in the menus"
+      },
+      "-O6S8PLC7D_xgduv6QG_": {
+        "include": "Up to 10 banners to show Hot Offers and most important information"
+      },
+      "-O6S8aWC45K2o7Wp57Hp": {
+        "include": "QR Scans and count of views are unlimited"
+      },
+      "-O6S9Y-OBTc6UY2csFrm": {
+        "include": "More than one Branch to manage chain of restaurants"
+      },
+      "-O6SAcb212Ue-Tpb01JT": {
+        "include": "Multilanguage content for large segment of users"
+      },
+      "-O6SBvDiaIjHPfD_UYa2": {
+        "include": "\"Standard\"/\"Discount\" price and \"Hide\" menu items for flexible policy of menu content"
+      }
+    },
+    "Showmore": "Show more",
+    "SignedinwithGoogle": "Signed in with Google",
+    "SignedupsuccessfullywithGoogle!": "Signed up successfully with Google!",
+    "Signinfailed:": "Sign in failed:",
+    "Signinsuccessful": "Sign in successful",
+    "Support": "Support",
+    "Thetwopasswordsdonotmatch!": "The two passwords do not match!",
+    "Userdata": "User data",
+    "VerificationEmailSent": "Verification Email Sent",
+    "Youremailhasbeensuccessfullyverified": "Your email has been successfully verified.",
+    "Yourpasswordhasbeensuccessfullyupdated": "Your password has been successfully updated.",
+    "aboutTitle": "Digital QR menu",
+    "comfirmPassword": "Comfirm Password",
+    "faq": "Frequently asked questions",
+    "forgotPassword": "Forgot Password ?",
+    "institutions": "Institutions",
+    "logout": "log out",
+    "or": "or",
+    "password ": "Password",
+    "resetemailsent": "Password reset email sent! Please check your inbox.",
+    "serviceInclude": "Servise Include",
+    "settings": "Settings",
+    "signInWithGoogle": "Sign In With Google",
+    "signUpWithGoogle": "Sign Up With Google",
+    "signin": "Sign In",
+    "signup": "Sign Up",
+    "symbols": "symbols"
+  }

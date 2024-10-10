@@ -1,0 +1,61 @@
+.carouselContainer {
+  background-color: transparent; 
+  padding: 20px 0;
+  overflow: hidden;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.logo {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.logoContainer:hover .logo {
+  transform: scale(1.1);
+  filter: grayscale(0%);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .carouselContainer {
+    padding: 10px 0; /* Reduce padding on medium screens */
+  }
+}
+
+@media (max-width: 900px) {
+  .carouselContainer {
+    padding: 10px 0; /* Maintain padding on smaller screens */
+  }
+
+  .slick-slide {
+    padding: 0 5px; /* Adjust padding to fit logos better */
+  }
+}
+
+@media (max-width: 600px) {
+  .carouselContainer {
+    padding: 10px 0; /* Maintain padding for mobile screens */
+  }
+
+  .carouselContainer > h1 {
+    font-size: 18px; /* Reduce font size for smaller screens */
+    color: #ff7700;
+  }
+
+  .slick-slide {
+    padding: 0 2px; /* Reduce padding for smaller screens */
+  }
+
+  .logo {
+    width: 80px; /* Adjust size of logos for mobile screens */
+    height: auto; /* Ensure logos maintain aspect ratio */
+  }
+}

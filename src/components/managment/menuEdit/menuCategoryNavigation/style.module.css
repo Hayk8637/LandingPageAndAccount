@@ -1,0 +1,34 @@
+.menuCategoryNavigation {
+    width: 100%;
+    max-width: 400px; /* Max width to limit the container's size */
+    overflow-x: auto; /* Enables horizontal scrolling */
+    white-space: nowrap; /* Prevents wrapping of items, allowing horizontal scroll */
+    padding-top: 20px;
+    padding-bottom: 20px;
+    position: fixed;
+    top: 64.8px;
+    z-index: 1;
+    margin: auto;
+}
+
+.menuCategoryNavigation > .a, 
+.menuCategoryNavigation > .activeTab {
+    display: inline-block; /* Allows them to line up horizontally */
+    padding: 9px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-right: 10px;
+    color: #B3B3B3;
+    margin-left: 10px;
+}
+
+.menuCategoryNavigation > .a {
+    border: 1px solid #B3B3B3;
+    margin-left: 10px;
+}
+
+.menuCategoryNavigation > .activeTab {
+    color: #FFFFFF;
+    background-color: #FF8E25;
+    border: none;
+}
