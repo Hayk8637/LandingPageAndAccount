@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore'; // Import Firestore functions
 import styles from './style.module.css';
-import { auth, db } from '../../../../firebaseConfig';
+import { db } from '../../../../firebaseConfig';
 import { useLocation } from 'react-router-dom';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 interface Category {
   id: string; // category ID
@@ -30,8 +31,22 @@ const MenuCategoryNavigation: React.FC = () => {
   const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
   const pathname = useLocation().pathname || '';
   const currentCategoryName = pathname.split('/').filter(Boolean).pop() || '';
-  const establishmentId = pathname.split('/')[pathname.split('/').length - 3] || '';
-  const userId = auth.currentUser?.uid;
+  const establishmentId = pathname.split('/')[pathname.split('/').length - 2] || '';
+  const [userId, setUserId] = useState<string | null>(null);  
+
+  useEffect(() => {
+    const auth = getAuth();
+    
+    const unsubscribeAuth = onAuthStateChanged(auth, (user:any) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId(null); 
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
   useEffect(() => {
     const fetchCategories = async () => {
         if (userId && establishmentId) {
@@ -73,7 +88,6 @@ const MenuCategoryNavigation: React.FC = () => {
         <a
           key={category.id}
           href={`/profile/establishments/${establishmentId}/${category.id}`} 
-          // passHref
           className={currentCategoryName === category.id ? styles.activeTab : styles.a} 
           style={{ color: currentCategoryName === category.id ? `#${establishmentStyles?.color2}` : `#${establishmentStyles?.color3}`,
                    backgroundColor: currentCategoryName === category.id ? `#${establishmentStyles?.color5}` : ``,

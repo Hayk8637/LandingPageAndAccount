@@ -3,7 +3,7 @@
     max-width: 400px;
     margin-top: 143px;
     padding-bottom: 84px;
-    margin-bottom: 20px;
+    min-height: calc(100vh - 227px);
 }
 .menuCategoryItems > .menuCategoryItemsList {
     margin: auto;
@@ -35,7 +35,6 @@
 .menuCategoryItems > .menuCategoryItemsList > .menuCategoryItem > .menuCategoryItemCart > .up >a {
     width: 100%;
     text-decoration: none;
-
 }
 .menuCategoryItems > .menuCategoryItemsList > .menuCategoryItem > .menuCategoryItemCart > .up > a > .itemImg {
     border-radius: 3px;
@@ -145,6 +144,7 @@
 }
 .addItem {
     width: 100%;
+    max-width: 400px;
     text-align: center;
     color: white;
     background-color: #ff7700;

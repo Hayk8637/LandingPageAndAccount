@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { InfoCircleOutlined, EditOutlined, UploadOutlined, CopyOutlined, WifiOutlined, PhoneOutlined, LockOutlined, EnvironmentOutlined, LeftOutlined } from '@ant-design/icons';
-import { Button, Modal, Form, Input, Upload, notification, Popover, FloatButton } from 'antd';
+import { Button, Modal, Form, Input, Upload, notification, Popover } from 'antd';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import styles from './style.module.css';
-import { auth } from '../../../../firebaseConfig';
 import { useLocation } from 'react-router-dom';
 
 interface FormValues {
@@ -239,20 +238,24 @@ const Header: React.FC = () => {
   );
   return (
     <>
-      <FloatButton style={{ top: 30, left: 40 }} icon={<LeftOutlined />} href={returnBack} />
       <div className={styles.header} style={{backgroundColor: `#${establishmentStyles?.color1}` , borderBottomColor: `#${establishmentStyles?.color2}`}} >
         <div className={styles.leftRight}>
           <div className={styles.left}>
-            <div className={styles.logoWrapper}>
-              {logoUrl ? (
-                  <img
-                  src={logoUrl}
-                  alt="logo"
-                  style={{ objectFit: 'contain' }}
-                />
-              ): null}
-            </div>
+            <a href={returnBack}>
+              <LeftOutlined  style={{color: `#${establishmentStyles?.color2}`}} />
+            </a>
           </div>
+          <div className={styles.center}>
+                {logoUrl && (
+                    <img
+                        src={logoUrl}
+                        alt="Logo"
+                        width={120} 
+                        height={50} 
+                        style={{ objectFit: 'contain' }} 
+                    />
+                )}
+            </div>
           <div className={styles.right}>
             <Popover placement="bottomRight" title="Establishment Info" content={popoverContent} arrow>
               <Button type="link" className={styles.info} 
@@ -264,7 +267,7 @@ const Header: React.FC = () => {
                   onMouseDown={() => setTextColor(`#${establishmentStyles?.color3}`)} 
                   onMouseUp={() => setTextColor(`#${establishmentStyles?.color3}`)} 
                >
-                <InfoCircleOutlined />
+                <InfoCircleOutlined style={{color: `#${establishmentStyles?.color2}`}}/>
               </Button>
             </Popover>
             <Button type="link" className={styles.edit} onClick={openModal}>

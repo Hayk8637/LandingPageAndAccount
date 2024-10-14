@@ -18,14 +18,20 @@
 .header > .leftRight > .left {
     display: inline-block;
     width: auto;
+    width: 49px;
 }
-.header > .leftRight > .left > .logoWrapper {
+.header > .leftRight > .left > a {
+    text-decoration: none;
+    font-size: 24px;
+    width: 32px;
+}
+.header > .leftRight > .center > .logoWrapper {
     position: relative;
     height: 50px;
     width: 100px;
     text-align: left;
 }
-.header > .leftRight > .left > .logoWrapper > img{
+.header > .leftRight > .center > .logoWrapper > img{
     width: 100%;
 }
 

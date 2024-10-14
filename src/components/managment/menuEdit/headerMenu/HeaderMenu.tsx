@@ -3,8 +3,8 @@ import styles from './style.module.css';
 import { CopyOutlined, EnvironmentOutlined, InfoCircleOutlined, LeftOutlined, LockOutlined, PhoneOutlined, WifiOutlined } from '@ant-design/icons';
 import { Button, Form, notification, Popover } from 'antd';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { auth } from '../../../../firebaseConfig';
 import { useLocation } from 'react-router-dom';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 interface FormValues {
     wifiname: string;
@@ -44,16 +44,15 @@ interface Establishment {
 
 const HeaderMenu: React.FC = () => {
     var currentPath = useLocation().pathname || '';
-    const centerText = currentPath.split('/')[currentPath.split('/').length - 2];
-    const returnBack = currentPath.split('/').slice(0, currentPath.split('/').length-2).join('/');
+    const returnBack = currentPath.split('/').slice(0, currentPath.split('/').length-1).join('/');
     const [form] = Form.useForm();
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const pathname = useLocation().pathname || '';
     const pathArray = pathname.split('/');
-    const establishmentId = pathArray[pathArray.length - 3];
-    const userId = auth.currentUser?.uid;
+    const establishmentId = pathArray[pathArray.length - 2];
     const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
-    const [textColor, setTextColor] = useState(`#${establishmentStyles?.color2 || 'white'}`);
+    const [textColor, setTextColor] = useState(`#${establishmentStyles?.color2}`);
+    const [userId, setUserId] = useState<string | null>(null);
 
 
     const [popoverData, setPopoverData] = useState<FormValues>({
@@ -63,6 +62,19 @@ const HeaderMenu: React.FC = () => {
         phone: '',
         currency: '',
     });
+    useEffect(() => {
+        const auth = getAuth();
+        
+        const unsubscribeAuth = onAuthStateChanged(auth, (user:any) => {
+          if (user) {
+            setUserId(user.uid);
+          } else {
+            setUserId(null);  
+          }
+        });
+    
+        return () => unsubscribeAuth();
+      }, []);
 
     useEffect(() => {
         const fetchEstablishmentData = async () => {
@@ -88,11 +100,7 @@ const HeaderMenu: React.FC = () => {
                 
 
         fetchEstablishmentData();
-    }, [establishmentId, form , userId]);
-
-    if (centerText === 'cart') {
-        // returnBack ;
-    }
+    }, [establishmentId, form , userId , establishmentStyles]);
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text).then(() => {
@@ -121,7 +129,9 @@ const HeaderMenu: React.FC = () => {
     return (
         <div className={styles.headerMenu} style={{backgroundColor: `#${establishmentStyles?.color1}`}}>
             <div className={styles.left}>
-                <a href={returnBack}><LeftOutlined  style={{color: `#${establishmentStyles?.color2}`}} /></a>
+                <a href={returnBack}>
+                    <LeftOutlined  style={{color: `#${establishmentStyles?.color2}`}} />
+                </a>
             </div>
             <div className={styles.center}>
                 {logoUrl && (
@@ -131,7 +141,6 @@ const HeaderMenu: React.FC = () => {
                         width={120} 
                         height={50} 
                         style={{ objectFit: 'contain' }} 
-                        // priority 
                     />
                 )}
             </div>
@@ -145,7 +154,7 @@ const HeaderMenu: React.FC = () => {
                     onBlur={() => setTextColor(`#${establishmentStyles?.color2}`)} 
                     onMouseDown={() => setTextColor(`#${establishmentStyles?.color3}`)} 
                     onMouseUp={() => setTextColor(`#${establishmentStyles?.color3}`)}  >
-                <InfoCircleOutlined />
+                <InfoCircleOutlined style={{color: `#${establishmentStyles?.color2}`}} />
               </Button>
                 </Popover>
             </div>

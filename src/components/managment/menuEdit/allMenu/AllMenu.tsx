@@ -5,7 +5,7 @@ import { doc, updateDoc, getDoc, deleteField } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../../../firebaseConfig';
 import style from './style.module.css';
-import { redirect, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 interface MenuCategoryItem {
@@ -21,6 +21,7 @@ interface EstablishmentStyles {
   color3: string;
   color4: string;
   color5: string;
+  showImg: boolean;
 }
 
 const AllMenu: React.FC = () => {
@@ -36,7 +37,7 @@ const AllMenu: React.FC = () => {
   const [orderModalVisible, setOrderModalVisible] = useState(false);
   const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
   const [userId, setUserId] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   const pathname = useLocation().pathname || '';
   const establishmentId = pathname.split('/').filter(Boolean).pop() || '';
   const inputRef = useRef<InputRef | null>(null); // Using Ant Design's Input ref
@@ -353,26 +354,16 @@ const AllMenu: React.FC = () => {
       <button
         key={item.id}
         className={style.menuCategoryItem}
-        style={{backgroundColor: `#${establishmentStyles?.color4}` ,  backgroundImage: `url(${item.imgUrl || ''})` }}
-        onClick={(e) => {
-          if (e.currentTarget === e.target) {
-            redirect(`./${establishmentId}/${item.id}`); 
-          }
-        }}
-      >
-        <a href='/' onClick={(e) => {
-          if (e.currentTarget === e.target) {
-            redirect(`./${establishmentId}/${item.id}`); 
-          }
-        }}>{item.name}</a>
+        style={{backgroundColor: `#${establishmentStyles?.color4}` ,  backgroundImage: establishmentStyles?.showImg ? `url(${item.imgUrl || ''})` : 'none',}}
+        onClick={() => { navigate(`./${item.id}`); }} >
+        <a href={`./${item.id}`} >{item.name}</a>
         <Popover
           content={popoverContent(item)}
           trigger="hover"
-          placement="topRight"
-        >
-          <a href='/' className={style.functions} onClick={(e) => e.stopPropagation()} >
+          placement="topRight">
+          <span className={style.functions} onClick={(e) => e.stopPropagation()} >
             <EditOutlined />
-          </a>
+          </span>
         </Popover>
       </button>
     ))}

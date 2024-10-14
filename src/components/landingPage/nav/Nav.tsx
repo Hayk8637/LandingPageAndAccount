@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Dropdown, Menu, MenuProps } from 'antd';
+import { Button, Dropdown, MenuProps } from 'antd';
 import SignIn from './signIn/SignIn';
 import SignUp from './signUp/SignUp';
 import ForgotPassword from './forgotPassword/ForgotPassword';

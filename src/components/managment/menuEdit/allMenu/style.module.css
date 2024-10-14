@@ -49,7 +49,6 @@
     cursor: pointer;
 }
 .allMenu > .menuCategories > .menuCategoryItem > .functions:hover  {
-    /* background-color: black; */
     color:#e65c00 ;
 }   
 .allMenu > .menuCategories > .menuCategoryItem::before {
@@ -64,11 +63,11 @@
     border-radius: 10px;
 }
  
-.allMenu > .menuCategories > .menuCategoryItem span {
+.allMenu > .menuCategories > .menuCategoryItem > span {
     position: relative;
     z-index: 2;
 }
-.allMenu > .menuCategories > .menuCategoryItem a {
+.allMenu > .menuCategories > .menuCategoryItem > a {
     position: relative;
     z-index: 2;
     text-decoration: none;

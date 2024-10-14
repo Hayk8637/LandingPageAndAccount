@@ -45,7 +45,7 @@ const SignUp: React.FC<SignUpProps> = ({ isModalVisible, onClose }) => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      message.success(`${t('SignedupsuccessfullywithGoogle!')}`);
+      message.success(`${t('SignedupsuccessfullywithGoogle!')} ${user.email}`);
       onClose();
     } catch (error) {
       message.error(`${t('ErrorsigningupwithGoogle:')} ` + error);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, notification, Modal, Popconfirm, Popover, QRCode, ColorPicker } from 'antd';
+import { Form, Input, Button, notification, Modal, Popconfirm, Popover, QRCode, ColorPicker, Switch } from 'antd';
 import { FileAddOutlined, DeleteOutlined, EditOutlined, QrcodeOutlined } from '@ant-design/icons';
 import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, deleteDoc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -10,6 +10,7 @@ import { redirect } from 'react-router-dom';
 interface Establishment {
   id?: string;
   styles: {
+    showImg: boolean;
     color1: string;
     color2: string;
     color3: string;
@@ -37,6 +38,7 @@ const Establishments: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isStylesModalVisible, setIsStylesModalVisible] = useState(false);
   const [isQrLinkModalVisible, setIsQrLinkModalVisible] = useState(false);
+  const [ isLanguagesModalVisible , setIsLanguagesModalVisible ] = useState(false);
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
   const [bannerFiles, setBannerFiles] = useState<File[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
@@ -116,6 +118,7 @@ const Establishments: React.FC = () => {
   
         const establishment: Establishment = {
           styles: {
+            showImg: true,
             color1: '1',
             color2: '2',
             color3: '3',
@@ -164,8 +167,6 @@ const Establishments: React.FC = () => {
       console.error('Error adding establishment:', error);
     }
   };
-  
-
   const handleCopyLink = () => {
     const linkToCopy = `https://menu.menubyqr.com/${user?.uid}/${selectedEstablishmentId}`;
     navigator.clipboard.writeText(linkToCopy)
@@ -186,35 +187,30 @@ const Establishments: React.FC = () => {
       await deleteDoc(docRef);
     }
   };
-
   const handleModalOpen = () => {
     form.resetFields();
     setIsModalVisible(true);
   };
-
   const handleModalClose = () => {
     setIsModalVisible(false);
   };
-
-
+  const handleLangugesModalClose = () => {
+    setIsLanguagesModalVisible(false)
+  }
   const handleStylesModalClose = () => {
     setIsStylesModalVisible(false);
   };
-
   const handleQrLinkModalOpen = (id: string) => {
     setIsStylesModalVisible(false);
     setIsQrLinkModalVisible(true);
     setSelectedEstablishmentId(id);
   };
-
   const handleQrLinkModalClose = () => {
     setIsQrLinkModalVisible(false);
   };
-
   const handleColorChange = (color: string, colorKey: keyof Establishment['styles']) => {
     setSelectedColors((prevColors) => ({ ...prevColors, [colorKey]: color }));
   };
-  
   const handleSaveStyles = async () => {
     const user = auth.currentUser;
 
@@ -226,7 +222,6 @@ const Establishments: React.FC = () => {
       handleStylesModalClose();
     }
   };
-
   const handleStylesModalOpen = (id: string) => {
     setIsQrLinkModalVisible(false);
     setIsStylesModalVisible(true);
@@ -245,6 +240,22 @@ const Establishments: React.FC = () => {
       });
     }
   };
+  const handleLanguagesModalOpen = (id: string) => {
+    setIsQrLinkModalVisible(false);
+    setIsStylesModalVisible(false);
+    setIsLanguagesModalVisible(true)
+    setSelectedEstablishmentId(id);
+  }
+  
+  const handleToggleShowImg = async (establishmentId: any, isVisible: boolean) => {
+    if (userId && establishmentId) {
+        const showImgRef = doc(db, 'users', userId, 'establishments', establishmentId);
+        await updateDoc(showImgRef, {
+          [`styles.showImg`]: isVisible,
+        });
+        // message.info(`Visibility toggled for category ${establishmentId} to ${isVisible ? 'ON' : 'OFF'}`);
+      } 
+    };
 
   return (<>
 
@@ -259,9 +270,6 @@ const Establishments: React.FC = () => {
                     src={establishment.info.logoUrl}
                     alt="Establishment Logo"
                     className={styles.logoImage}
-                    // priority
-                    // width={100}
-                    // height={100}
                     style={{ objectFit: 'contain' }}
                   />
                 </span>
@@ -270,8 +278,12 @@ const Establishments: React.FC = () => {
             <Popover
               content={
                 <div>
+                  <Switch checkedChildren="With IMG" unCheckedChildren="Without IMG" checked={establishment.styles.showImg} onChange={(checked) => handleToggleShowImg(establishment.id, checked)} />
                   <Button className={styles.editButtons} onClick={() => handleStylesModalOpen(establishment.id!)}>
-                    Menu Styles
+                    Styles
+                  </Button>
+                  <Button className={styles.editButtons} onClick={() => handleLanguagesModalOpen(establishment.id!)} >
+                    Languages
                   </Button>
                   <Button className={styles.editButtons} icon={<QrcodeOutlined />} onClick={() => handleQrLinkModalOpen(establishment.id!)}>
                     QR or Link
@@ -294,7 +306,6 @@ const Establishments: React.FC = () => {
             </Popover>
           </div>
         ))}
-
         <Button className={styles.addEstablishments} onClick={handleModalOpen}>
           <div className={styles.content}>
             <FileAddOutlined className={styles.icons} />
@@ -302,7 +313,11 @@ const Establishments: React.FC = () => {
           </div>
         </Button>
       </div>
-
+      <Modal title="Languages Establishment" open={isLanguagesModalVisible} onCancel={handleLangugesModalClose} footer={null}>
+          <Button style={{ marginTop: '10px', width: '100%' }} onClick={handleLangugesModalClose}>
+            Cancel
+          </Button>
+      </Modal>
       <Modal title="Add Establishment" open={isModalVisible} onCancel={handleModalClose} footer={null}>
         <Form form={form} layout="vertical" onFinish={handleAddEstablishment}>
           <Form.Item

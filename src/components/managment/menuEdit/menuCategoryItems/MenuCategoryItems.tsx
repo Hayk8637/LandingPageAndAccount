@@ -3,10 +3,11 @@ import { Modal, Form, Input, Upload, Button, message, Popover, Switch } from 'an
 import { DeleteOutlined, EditOutlined, OrderedListOutlined, UploadOutlined } from '@ant-design/icons';
 import { doc, updateDoc, getDoc, deleteField } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { auth, db, storage } from '../../../../firebaseConfig';
+import { db, storage } from '../../../../firebaseConfig';
 import styles from './style.module.css';
 import defimg from './pngwi.png'
 import { useLocation } from 'react-router-dom';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 interface MenuCategoryItem {
   id: string;
   name: string;
@@ -15,7 +16,14 @@ interface MenuCategoryItem {
   isVisible: boolean;
   order: number
 }
-
+interface EstablishmentStyles {
+  showImg: boolean;
+  color1: string;
+  color2: string;
+  color3: string;
+  color4: string;
+  color5: string;
+}
 const MenuCategoryItems: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuCategoryItem[]>([]);
   const [, setError] = useState<string | null>(null);
@@ -26,12 +34,26 @@ const MenuCategoryItems: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
   const [orderModalVisible, setOrderModalVisible] = useState(false);
+  const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
 
   const pathname = useLocation().pathname || '';
-  const establishmentId = pathname.split('/')[pathname.split('/').length - 3];
-  const categoryId = pathname.split('/')[pathname.split('/').length - 2];
-  const userId = auth.currentUser?.uid;
+  const establishmentId = pathname.split('/')[pathname.split('/').length - 2];
+  const categoryId = pathname.split('/')[pathname.split('/').length - 1];
+  const [userId, setUserId] = useState<string | null>(null);  
 
+  useEffect(() => {
+    const auth = getAuth();
+    
+    const unsubscribeAuth = onAuthStateChanged(auth, (user:any) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId(null); 
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
   useEffect(() => {
     const fetchMenuItems = async () => {
       if (userId && establishmentId) {
@@ -56,7 +78,8 @@ const MenuCategoryItems: React.FC = () => {
             );
     
             items.sort((a, b) => a.order - b.order);
-    
+            setEstablishmentStyles(data.styles)
+
             setMenuItems(items);
           } else {
             setError('No menu items found for this category');
@@ -89,8 +112,8 @@ const MenuCategoryItems: React.FC = () => {
         const imgId = Date.now().toString();
         const storageRef = ref(storage, `establishments/${establishmentId}/items/${imgId}`);
         const uploadTask = uploadBytesResumable(storageRef, imageFile);
-        await uploadTask; // Wait for the upload to complete
-        imageUrl = await getDownloadURL(storageRef); // Get the download URL
+        await uploadTask;
+        imageUrl = await getDownloadURL(storageRef); 
       }
       if(imageUrl === ""){
         imageUrl = './pngwing 1.png'
@@ -273,7 +296,7 @@ const MenuCategoryItems: React.FC = () => {
   };
   
   return (
-    <div className={styles.menuCategoryItems}>
+    <div className={styles.menuCategoryItems} style={{backgroundColor: `#${establishmentStyles?.color1}` }}>
       <div className={styles.ordering}>
         <Button type="link" className={styles.orderButton} onClick={showOrderModal}><OrderedListOutlined /></Button>
       </div>
@@ -282,17 +305,17 @@ const MenuCategoryItems: React.FC = () => {
             menuItems.map((item) => (
               <div key={item.id} className={styles.menuCategoryItem}>
                 <div className={styles.menuCategoryItemCart}>
-                  <div className={styles.up}>
-                      <div className={styles.itemImg}>
+                  <div className={styles.up}   style={{ height: establishmentStyles?.showImg ? '229px' : '40px' }}>
+                    {establishmentStyles?.showImg ? (
+                    <div className={styles.itemImg}>
                       <img
                         src={item.img || defimg}
                         alt={item.name}
                         width={150}
                         height={150}
-                        // priority // Add this line
                       />
-
-                      </div>
+                    </div>
+                     ) : null}
                       <div className={styles.itemName}>
                         <span>{item.name}</span>
                       </div>
