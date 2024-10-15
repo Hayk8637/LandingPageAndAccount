@@ -65,7 +65,6 @@ const Nav: React.FC = () => {
       console.error('Sign out error:', error);
     }
   };
-
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     if (e.key === 'logout') {
       handleSignOut(); // Trigger sign-out when "Logout" is clicked

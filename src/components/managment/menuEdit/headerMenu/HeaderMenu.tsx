@@ -25,6 +25,11 @@ interface EstablishmentStyles {
 interface Establishment {
     id?: string;
     styles: EstablishmentStyles;
+    languages: {
+        am: boolean,
+        ru: boolean,
+        en: boolean
+    }
     info: {
         name: string;
         wifiname?: string;
@@ -41,6 +46,12 @@ interface Establishment {
     };
     uid: string;
 }
+interface Languages {
+    en: boolean;
+    ru: boolean;
+    am: boolean;
+  }
+  
 
 const HeaderMenu: React.FC = () => {
     var currentPath = useLocation().pathname || '';
@@ -53,8 +64,24 @@ const HeaderMenu: React.FC = () => {
     const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
     const [textColor, setTextColor] = useState(`#${establishmentStyles?.color2}`);
     const [userId, setUserId] = useState<string | null>(null);
+    const [languages, setLanguages] = useState< Languages | null>(null);
+    const [currentLanguage, setCurrentLanguage] = useState<string>('en'); // Default to 'en'
 
-
+    useEffect(() => {
+      // Check localStorage for the current language
+      const savedLanguage = localStorage.getItem('language');
+      if (savedLanguage) {
+        setCurrentLanguage(savedLanguage);
+      } else {
+        // If no language is found, set to 'en'
+        localStorage.setItem('language', 'en');
+      }
+    }, []);
+    const handleLanguageChange = (language: string) => {
+        setCurrentLanguage(language);
+        localStorage.setItem('language', language); // Save the new language in localStorage
+        window.location.reload(); // Refresh the page
+    };
     const [popoverData, setPopoverData] = useState<FormValues>({
         wifiname: '',
         wifipass: '',
@@ -94,6 +121,11 @@ const HeaderMenu: React.FC = () => {
                         currency: data.info?.currency || '',
                     });
                     await setEstablishmentStyles(data.styles);
+                    await setLanguages({
+                        en: data.languages.en,
+                        am: data.languages.am,
+                        ru: data.languages.ru
+                       })
                 }
             };
             }
@@ -145,6 +177,34 @@ const HeaderMenu: React.FC = () => {
                 )}
             </div>
             <div className={styles.right}>
+            {(languages?.am || languages?.en || languages?.ru) ? (
+          <select
+            className={styles.languageCheck}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: `#${establishmentStyles?.color2}`,
+              fontSize: '18px'
+            }}
+            value={currentLanguage}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+          >
+            {Object.keys(languages)
+              .filter((lang) => languages[lang as keyof Languages])
+              .map((language) => (
+                <option
+                  key={language}
+                  value={language}
+                  style={{
+                    background: 'none',
+                    color: establishmentStyles?.color2
+                  }}
+                >
+                  {language}
+                </option>
+              ))}
+          </select>
+        ) : null}
                 <Popover placement="bottomRight" style={{padding:'15px'}} title="Establishment Info" content={popoverContent} arrow>
                 <Button type="link" className={styles.info}
                     style={{ color: textColor }}

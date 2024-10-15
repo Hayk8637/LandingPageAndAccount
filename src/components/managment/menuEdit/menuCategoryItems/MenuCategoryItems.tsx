@@ -8,9 +8,14 @@ import styles from './style.module.css';
 import defimg from './pngwi.png'
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+interface Language {
+  en: string,
+  am: string,
+  ru: string 
+}
 interface MenuCategoryItem {
   id: string;
-  name: string;
+  name: Language;
   img: string | null;
   price: number;
   isVisible: boolean;
@@ -24,23 +29,40 @@ interface EstablishmentStyles {
   color4: string;
   color5: string;
 }
+type CurrentLanguage = 'am' | 'en' | 'ru';
+
 const MenuCategoryItems: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuCategoryItem[]>([]);
   const [, setError] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [newItem, setNewItem] = useState<Partial<MenuCategoryItem> & { img?: string | null }>({});
+  const [newItem, setNewItem] = useState<Partial<MenuCategoryItem> & { name: Language , img?: string | null }>({ 
+    name: { en: '', am: '', ru: '' },
+    img: null,
+    order: 0,
+  }); 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
   const [orderModalVisible, setOrderModalVisible] = useState(false);
   const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
-
+  const [currency, setCurrency] = useState<string>('$');
   const pathname = useLocation().pathname || '';
   const establishmentId = pathname.split('/')[pathname.split('/').length - 2];
   const categoryId = pathname.split('/')[pathname.split('/').length - 1];
   const [userId, setUserId] = useState<string | null>(null);  
-
+  const [currentLanguage, setCurrentLanguage] = useState<CurrentLanguage>('en'); // Default to 'en'
+  
+  useEffect(() => {
+    // Check localStorage for the current language
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
+      setCurrentLanguage(savedLanguage);
+    } else {
+      // If no language is found, set to 'en'
+      localStorage.setItem('language', 'en');
+    }
+  }, [currentLanguage]);
   useEffect(() => {
     const auth = getAuth();
     
@@ -79,7 +101,7 @@ const MenuCategoryItems: React.FC = () => {
     
             items.sort((a, b) => a.order - b.order);
             setEstablishmentStyles(data.styles)
-
+            setCurrency(data.information.currency);
             setMenuItems(items);
           } else {
             setError('No menu items found for this category');
@@ -96,10 +118,7 @@ const MenuCategoryItems: React.FC = () => {
   }, [userId, establishmentId, categoryId , newItem]);
 
   const handleNewItemSubmit = async () => {
-    if (!newItem.name || !newItem.price ) {
-      message.error('Please fill all fields');
-      return;
-    }
+
     if (!userId || !establishmentId) {
       message.error('Missing user or establishment information');
       return;
@@ -122,7 +141,11 @@ const MenuCategoryItems: React.FC = () => {
       const docRef = doc(db, 'users' , userId , 'establishments', establishmentId);
       await updateDoc(docRef, {
         [`menu.items.${categoryId}.${uniqueId}`]: {
-        name: newItem.name,
+        name: {
+          en: newItem.name[currentLanguage],
+          am: newItem.name[currentLanguage],
+          ru: newItem.name[currentLanguage]
+        },
         price: newItem.price,
         img: imageUrl,
         order: menuItems.length,
@@ -130,8 +153,11 @@ const MenuCategoryItems: React.FC = () => {
       });
       message.success('New item added successfully');
       setModalVisible(false);
-      setNewItem({});
-      setImageFile(null);
+      setNewItem({
+        name: { en: '', am: '', ru: '' },
+        img: null,
+        order: 0,
+      });      setImageFile(null);
     } catch (error) {
       message.error('Failed to add new item');
     } finally {
@@ -140,7 +166,7 @@ const MenuCategoryItems: React.FC = () => {
   };
 
   const handleEditItemSubmit = async () => {
-    if (!currentEditingId || !newItem.name || !newItem.price || !userId || !establishmentId) {
+    if (!currentEditingId ||!newItem.name || !newItem.name?.en || !newItem.name?.ru || !newItem.name?.am || !newItem.price || !userId || !establishmentId) {
       message.error('Please fill all fields');
       return;
     }
@@ -164,9 +190,13 @@ const MenuCategoryItems: React.FC = () => {
         }
       }
       const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
+      const updatedName = {
+        ...newItem.name, // Keep existing values for other languages
+        [currentLanguage]: newItem.name[currentLanguage], // Update the current language
+      };
       await updateDoc(docRef, {
         [`menu.items.${categoryId}.${currentEditingId}`]: {
-        name: newItem.name,
+        name: updatedName,
         price: newItem.price,
         img: imageUrl,
         isVisible: true}
@@ -174,8 +204,11 @@ const MenuCategoryItems: React.FC = () => {
       message.success('Item updated successfully');
       setEditModalVisible(false);
       setCurrentEditingId(null);
-      setNewItem({});
-      setImageFile(null);
+      setNewItem({
+        name: { en: '', am: '', ru: '' },
+        img: null,
+        order: 0,
+      });      setImageFile(null);
     } catch (error) {
       message.error('Failed to update item');
     } finally {
@@ -303,27 +336,27 @@ const MenuCategoryItems: React.FC = () => {
       <div className={styles.menuCategoryItemsList}>
         {menuItems.length > 0 ? (
             menuItems.map((item) => (
-              <div key={item.id} className={styles.menuCategoryItem}>
+              <div key={item.id} className={styles.menuCategoryItem} style={{border: `1px solid #${establishmentStyles?.color2}`}}>
                 <div className={styles.menuCategoryItemCart}>
                   <div className={styles.up}   style={{ height: establishmentStyles?.showImg ? '229px' : '40px' }}>
                     {establishmentStyles?.showImg ? (
                     <div className={styles.itemImg}>
                       <img
                         src={item.img || defimg}
-                        alt={item.name}
+                        alt={item.name[currentLanguage]}
                         width={150}
                         height={150}
                       />
                     </div>
                      ) : null}
-                      <div className={styles.itemName}>
-                        <span>{item.name}</span>
+                      <div className={styles.itemName} >
+                        <span style={{color: `#${establishmentStyles?.color2}`}}>{item.name[currentLanguage]}</span>
                       </div>
                       <div className={styles.itemPrice}>
-                        <span>{item.price}</span>
+                        <span style={{color: `#${establishmentStyles?.color2}`}}>{item.price} {currency}</span>
                       </div>
                   </div>
-                  <Popover
+                  <Popover  
                     content={popoverContent(item)}
                     trigger="hover"
                     placement="topRight"
@@ -351,8 +384,16 @@ const MenuCategoryItems: React.FC = () => {
     <Form.Item label="Item Name" required>
       <Input
         placeholder="Item Name"
-        value={newItem.name || ''}
-        onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+        value={newItem.name?.[currentLanguage] || ''}
+        onChange={(e) =>
+          setNewItem({
+            ...newItem,
+            name: {
+              ...newItem.name,
+              [currentLanguage]: e.target.value || '',
+            } as Language, // Type assertion to satisfy the type checker
+          })
+        }
       />
     </Form.Item>
     <Form.Item label="Price" required>
@@ -370,7 +411,7 @@ const MenuCategoryItems: React.FC = () => {
           return false; // Prevent auto upload
         }}
         maxCount={1}
-        listType='picture'
+        listType="picture"
       >
         <Button icon={<UploadOutlined />}>Upload</Button>
       </Upload>
@@ -392,8 +433,14 @@ const MenuCategoryItems: React.FC = () => {
     <Form.Item label="Item Name" required>
       <Input
         placeholder="Item Name"
-        value={newItem.name}
-        onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+        value={newItem.name?.[currentLanguage] || ''}
+        onChange={(e) => setNewItem({
+          ...newItem,
+          name: {
+            ...newItem.name,
+            [currentLanguage]: e.target.value || '',
+          } as Language, // Type assertion to satisfy the type checker
+        })}
       />
     </Form.Item>
     <Form.Item label="Price" required>
@@ -452,7 +499,7 @@ const MenuCategoryItems: React.FC = () => {
   <div>
     {menuItems.map(item => (
       <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span>{item.name}</span>
+        <span>{item.name[currentLanguage]}</span>
         <div>
           <Button 
             disabled={menuItems[0].id === item.id} 

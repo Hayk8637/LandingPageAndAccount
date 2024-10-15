@@ -3,9 +3,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import global_en from './translations/en/translation.json'
-import global_ru from './translations/ru/translation.json'
-import global_am from './translations/am/translation.json'
+import global_en from './translations/en/common.json'
+import global_ru from './translations/ru/common.json'
+import global_am from './translations/am/common.json'
 import i18next from 'i18next';
 import { I18nextProvider } from 'react-i18next';
 

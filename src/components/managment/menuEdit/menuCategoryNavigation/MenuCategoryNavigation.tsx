@@ -7,15 +7,20 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 interface Category {
   id: string; // category ID
-  name: string; // category name
+  name: Language; // category name
 }
 
 interface MenuCategoryItem {
   id: string;
-  name: string;
+  name: Language
   imgUrl: string | null;
   isVisible: boolean;
   order: number;
+}
+interface Language {
+    en: string,
+    am: string,
+    ru: string 
 }
 interface EstablishmentStyles {
   color1: string;
@@ -24,6 +29,7 @@ interface EstablishmentStyles {
   color4: string;
   color5: string;
 }
+type CurrentLanguage = 'am' | 'en' | 'ru';
 
 const MenuCategoryNavigation: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -33,7 +39,18 @@ const MenuCategoryNavigation: React.FC = () => {
   const currentCategoryName = pathname.split('/').filter(Boolean).pop() || '';
   const establishmentId = pathname.split('/')[pathname.split('/').length - 2] || '';
   const [userId, setUserId] = useState<string | null>(null);  
-
+  const [currentLanguage, setCurrentLanguage] = useState<CurrentLanguage>('en'); // Default to 'en'
+  
+  useEffect(() => {
+    // Check localStorage for the current language
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
+      setCurrentLanguage(savedLanguage);
+    } else {
+      // If no language is found, set to 'en'
+      localStorage.setItem('language', 'en');
+    }
+  }, [currentLanguage]);
   useEffect(() => {
     const auth = getAuth();
     
@@ -89,11 +106,11 @@ const MenuCategoryNavigation: React.FC = () => {
           key={category.id}
           href={`/profile/establishments/${establishmentId}/${category.id}`} 
           className={currentCategoryName === category.id ? styles.activeTab : styles.a} 
-          style={{ color: currentCategoryName === category.id ? `#${establishmentStyles?.color2}` : `#${establishmentStyles?.color3}`,
-                   backgroundColor: currentCategoryName === category.id ? `#${establishmentStyles?.color5}` : ``,
+          style={{ color: currentCategoryName === category.id ? `#${establishmentStyles?.color1}` : `#${establishmentStyles?.color2}`,
+                   backgroundColor: currentCategoryName === category.id ? `#${establishmentStyles?.color2}` : ``,
                    borderColor: currentCategoryName === category.id ? `` : `#${establishmentStyles?.color2}`,
                 }}>
-          {category.name}
+          {category.name[currentLanguage]}
         </a>
       ))}
     </div>

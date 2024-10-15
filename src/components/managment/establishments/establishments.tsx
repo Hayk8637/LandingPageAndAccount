@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, notification, Modal, Popconfirm, Popover, QRCode, ColorPicker, Switch } from 'antd';
+import { Form, Input, Button, notification, Modal, Popconfirm, Popover, QRCode, ColorPicker, Switch, Checkbox } from 'antd';
 import { FileAddOutlined, DeleteOutlined, EditOutlined, QrcodeOutlined } from '@ant-design/icons';
 import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, deleteDoc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -17,6 +17,11 @@ interface Establishment {
     color4: string;
     color5: string;
   };
+  languages: {
+    am: boolean,
+    ru: boolean,
+    en: boolean
+  }
   info: {
     name: string;
     wifiname?: string;
@@ -32,6 +37,8 @@ interface Establishment {
   };
   uid: string;
 }
+type Language = 'am' | 'en' | 'ru';
+
 
 const Establishments: React.FC = () => {
   const [form] = Form.useForm();
@@ -50,6 +57,11 @@ const Establishments: React.FC = () => {
     color3: '#ffffff',
     color4: '#ffffff',
     color5: '#ffffff',
+  });
+  const [selectedLanguages, setSelectedLanguages] = useState({
+    am: true, // Defaulting 'am' to true to ensure at least one is selected
+    en: false,
+    ru: false,
   });
   const auth = getAuth();
   const db = getFirestore();
@@ -124,6 +136,11 @@ const Establishments: React.FC = () => {
             color3: '3',
             color4: '4',
             color5: '5',
+          },
+          languages: {
+            am: true,
+            ru: true,
+            en: true
           },
           info: {
             name: values.name,
@@ -240,24 +257,53 @@ const Establishments: React.FC = () => {
       });
     }
   };
-  const handleLanguagesModalOpen = (id: string) => {
-    setIsQrLinkModalVisible(false);
-    setIsStylesModalVisible(false);
-    setIsLanguagesModalVisible(true)
-    setSelectedEstablishmentId(id);
-  }
-  
   const handleToggleShowImg = async (establishmentId: any, isVisible: boolean) => {
     if (userId && establishmentId) {
         const showImgRef = doc(db, 'users', userId, 'establishments', establishmentId);
         await updateDoc(showImgRef, {
           [`styles.showImg`]: isVisible,
-        });
-        // message.info(`Visibility toggled for category ${establishmentId} to ${isVisible ? 'ON' : 'OFF'}`);
-      } 
+        });} 
     };
-
-  return (<>
+ const handleLanguagesModalOpen = (id: string) => {
+    setIsQrLinkModalVisible(false);
+    setIsStylesModalVisible(false);
+    setIsLanguagesModalVisible(true)
+    setSelectedEstablishmentId(id);
+  }
+  const handleUpdateLanguages = async (establishmentId: any, language: Language) => {
+    // Ensure at least one language remains selected
+    const checkedLanguages = Object.values(selectedLanguages).filter(Boolean).length;
+    if (checkedLanguages === 1 && selectedLanguages[language]) {
+      // If trying to uncheck the last checked language, do nothing
+      return;
+    }
+  
+    // Toggle the checkbox state and update Firestore with the new state
+    setSelectedLanguages((prevState) => {
+      const updatedLanguages = {
+        ...prevState,
+        [language]: !prevState[language],
+      };
+  
+      // Update Firestore
+      if (userId && establishmentId) {
+        const showImgRef = doc(db, 'users', userId, 'establishments', establishmentId);
+        updateDoc(showImgRef, {
+          languages: updatedLanguages,
+        })
+          .then(() => {
+          })
+          .catch((error) => {
+            console.error("Error updating languages in Firestore:", error);
+          });
+      }
+  
+      return updatedLanguages;
+    });
+  };
+  
+  
+   return (<>
 
     <div className={styles.main}>
       <div className={styles.items}>
@@ -314,10 +360,28 @@ const Establishments: React.FC = () => {
         </Button>
       </div>
       <Modal title="Languages Establishment" open={isLanguagesModalVisible} onCancel={handleLangugesModalClose} footer={null}>
-          <Button style={{ marginTop: '10px', width: '100%' }} onClick={handleLangugesModalClose}>
-            Cancel
-          </Button>
-      </Modal>
+      <Checkbox
+        checked={selectedLanguages.am}
+        onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'am') }
+      >
+        Armenian (AM)
+      </Checkbox>
+      <Checkbox
+        checked={selectedLanguages.en}
+        onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'en')}
+      >
+        English (EN)
+      </Checkbox>
+      <Checkbox
+        checked={selectedLanguages.ru}
+        onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'ru')}
+      >
+        Russian (RU)
+      </Checkbox>
+      <Button style={{ marginTop: '10px', width: '100%' }} onClick={handleLangugesModalClose}>
+        Cancel
+      </Button>
+    </Modal>
       <Modal title="Add Establishment" open={isModalVisible} onCancel={handleModalClose} footer={null}>
         <Form form={form} layout="vertical" onFinish={handleAddEstablishment}>
           <Form.Item

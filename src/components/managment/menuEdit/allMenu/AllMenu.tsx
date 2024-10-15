@@ -10,10 +10,15 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 interface MenuCategoryItem {
   id: string;
-  name: string;
+  name: Language
   imgUrl: string | null;
   isVisible: boolean;
   order: number;
+}
+interface Language {
+    en: string,
+    am: string,
+    ru: string 
 }
 interface EstablishmentStyles {
   color1: string;
@@ -24,13 +29,14 @@ interface EstablishmentStyles {
   showImg: boolean;
 }
 
+type CurrentLanguage = 'am' | 'en' | 'ru';
 const AllMenu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuCategoryItem[]>([]);
   const [, setLoading] = useState(true);
   const [, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [newCategory, setNewCategory] = useState<{ name: string, imgUrl: string | null , order: number }>({ name: '', imgUrl: null , order: 0});
+  const [newCategory, setNewCategory] = useState<{ name: Language, imgUrl: string | null , order: number }>({ name: { en:'' ,am: '' , ru:''  }, imgUrl: null , order: 0});
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
@@ -41,7 +47,18 @@ const AllMenu: React.FC = () => {
   const pathname = useLocation().pathname || '';
   const establishmentId = pathname.split('/').filter(Boolean).pop() || '';
   const inputRef = useRef<InputRef | null>(null); // Using Ant Design's Input ref
-
+  const [currentLanguage, setCurrentLanguage] = useState<CurrentLanguage>('en'); // Default to 'en'
+  
+  useEffect(() => {
+    // Check localStorage for the current language
+    const savedLanguage = localStorage.getItem('language');
+    if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
+      setCurrentLanguage(savedLanguage);
+    } else {
+      // If no language is found, set to 'en'
+      localStorage.setItem('language', 'en');
+    }
+  }, [currentLanguage]);
   useEffect(() => {
     if (isModalVisible && inputRef.current) {
       inputRef.current.focus(); // Focus the input when the modal opens
@@ -106,18 +123,26 @@ const AllMenu: React.FC = () => {
     setOrderModalVisible(true);
   };
   const showEditModal = (item: MenuCategoryItem) => {
-    setNewCategory({ name: item.name, imgUrl: item.imgUrl , order: item.order });
+    setNewCategory({
+      name: {
+        en: item.name.en,  
+        am: item.name.am,
+        ru: item.name.ru,
+      },
+      imgUrl: item.imgUrl,
+      order: item.order,
+    });
     setCurrentEditingId(item.id);
     setIsEditModalVisible(true);
   };
   const handleCancel = () => {
     setIsModalVisible(false);
-    setNewCategory({ name: '', imgUrl: null , order: 0 });
+    setNewCategory({ name: {en: '' , am: '' , ru: ''}, imgUrl: null , order: 0 });
     setImageFile(null);
   };
   const handleEditCancel = () => {
     setIsEditModalVisible(false);
-    setNewCategory({ name: '', imgUrl: null , order: 0 });
+    setNewCategory({ name: {en: '' , am: '' , ru: ''}, imgUrl: null , order: 0 });
     setCurrentEditingId(null);
   };
   const handleImageUpload = (file: File) => {
@@ -125,25 +150,20 @@ const AllMenu: React.FC = () => {
     return false;
   };
   const handleSubmit = async () => {
-    if (!newCategory.name) {
-      message.error('Category name is required');
-      return;
-    }
-
     if (!userId || !establishmentId) {
       message.error('Missing user or establishment information');
       return;
     }
-
+  
     setUploading(true);
     try {
       let imgUrl = '';
-
+  
       if (imageFile?.name) {
         const uniqueId = Date.now().toString();
         const storageRef = ref(storage, `establishments/${establishmentId}/categories/${uniqueId}`);
         const uploadTask = uploadBytesResumable(storageRef, imageFile);
-
+  
         await new Promise<void>((resolve, reject) => {
           uploadTask.on(
             'state_changed',
@@ -159,23 +179,40 @@ const AllMenu: React.FC = () => {
           );
         });
       }
-
+  
       const uniqueId = Date.now().toString();
       const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
       await updateDoc(docRef, {
         [`menu.categories.${uniqueId}`]: {
-          name: newCategory.name,
+          name: {
+            en: newCategory.name[currentLanguage],
+            am: newCategory.name[currentLanguage],
+            ru: newCategory.name[currentLanguage]
+          },
           imgUrl: imgUrl || null,
           isVisible: true,
           order: menuItems.length
         },
       });
       await updateDoc(docRef, {
-        [`menu.items.${uniqueId}`]: {
-        },
+        [`menu.items.${uniqueId}`]: {},
       });
-
-      setMenuItems((prev) => [...prev, { id: uniqueId, name: newCategory.name, imgUrl, isVisible: true, order: menuItems.length }]);
+  
+      setMenuItems((prev) => [
+        ...prev,
+        {
+          id: uniqueId,
+          name: {
+            en: newCategory.name[currentLanguage],
+            am: newCategory.name[currentLanguage],
+            ru: newCategory.name[currentLanguage]
+          },
+          imgUrl,
+          isVisible: true,
+          order: menuItems.length
+        },
+      ]);
+  
       message.success('Category created successfully');
       handleCancel();
     } catch (error) {
@@ -184,23 +221,25 @@ const AllMenu: React.FC = () => {
       setUploading(false);
     }
   };
+  
   const handleEditSubmit = async () => {
-    if (!newCategory.name) {
-      message.error('Category name is required');
+    if (!newCategory.name[currentLanguage]) {
+      message.error('Category name is required for the current language');
       return;
     }
-
+  
     if (!userId || !establishmentId || !currentEditingId) {
       message.error('Missing user or establishment information');
       return;
     }
-    let imgUrl = '';
-
+  
+    let imgUrl = newCategory.imgUrl || '';
+  
     if (imageFile) {
       const uniqueId = Date.now().toString();
       const storageRef = ref(storage, `establishments/${establishmentId}/categories/${uniqueId}`);
       const uploadTask = uploadBytesResumable(storageRef, imageFile);
-
+  
       await new Promise<void>((resolve, reject) => {
         uploadTask.on(
           'state_changed',
@@ -216,22 +255,31 @@ const AllMenu: React.FC = () => {
         );
       });
     }
-
+  
     setUploading(true);
     try {
       const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
+  
+      // Update the current language while keeping the other languages unchanged
+      const updatedName = {
+        ...newCategory.name, // Keep existing values for other languages
+        [currentLanguage]: newCategory.name[currentLanguage], // Update the current language
+      };
+  
       await updateDoc(docRef, {
         [`menu.categories.${currentEditingId}`]: {
-          name: newCategory.name,
+          name: updatedName,
           imgUrl: imgUrl,
           order: newCategory.order,
           isVisible: true,
         },
       });
-
+  
+      // Update the local state with the new name and imgUrl for the edited item
       const updatedItems = menuItems.map(item => 
-        item.id === currentEditingId ? { ...item, name: newCategory.name, imgUrl: newCategory.imgUrl , order: item.order } : item
+        item.id === currentEditingId ? { ...item, name: updatedName, imgUrl, order: item.order } : item
       );
+  
       setMenuItems(updatedItems);
       message.success('Category updated successfully');
       handleEditCancel();
@@ -241,6 +289,7 @@ const AllMenu: React.FC = () => {
       setUploading(false);
     }
   };
+  
   const handleToggleVisibility = async (id: string, isVisible: boolean) => {
     if (userId && establishmentId) {
       try {
@@ -356,7 +405,7 @@ const AllMenu: React.FC = () => {
         className={style.menuCategoryItem}
         style={{backgroundColor: `#${establishmentStyles?.color4}` ,  backgroundImage: establishmentStyles?.showImg ? `url(${item.imgUrl || ''})` : 'none',}}
         onClick={() => { navigate(`./${item.id}`); }} >
-        <a href={`./${item.id}`} >{item.name}</a>
+        <a href={`./${item.id}`} >{item.name[currentLanguage]}</a>
         <Popover
           content={popoverContent(item)}
           trigger="hover"
@@ -382,9 +431,16 @@ const AllMenu: React.FC = () => {
           <Form.Item label="Category Name" required>
             <Input
               ref = {inputRef}
-              value={newCategory.name}
-              onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
-            />
+              value={newCategory.name[currentLanguage]}
+              onChange={(e) => 
+                setNewCategory({
+                  ...newCategory,
+                  name: {
+                    ...newCategory.name,
+                    [currentLanguage]: e.target.value,  // Use bracket notation to update the current language
+                  }
+                })
+              }            />
           </Form.Item>
           <Form.Item label="Image Upload">
             <Upload beforeUpload={handleImageUpload}  maxCount={1} listType='picture'>
@@ -407,8 +463,14 @@ const AllMenu: React.FC = () => {
         <Form layout="vertical">
           <Form.Item label="Category Name" required>
             <Input
-              value={newCategory.name}
-              onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+              value={newCategory.name[currentLanguage]}
+              onChange={(e) => setNewCategory({
+                ...newCategory,
+                name: {
+                  ...newCategory.name,
+                  [currentLanguage]: e.target.value,  // Use bracket notation to update the current language
+                }
+              })}
             />
           </Form.Item>
           <Form.Item label="Image Upload">
@@ -455,7 +517,7 @@ const AllMenu: React.FC = () => {
   <div>
     {menuItems.map(item => (
       <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span>{item.name}</span>
+        <span>{item.name[currentLanguage]}</span>
         <div>
           <Button 
             disabled={menuItems[0].id === item.id} 
