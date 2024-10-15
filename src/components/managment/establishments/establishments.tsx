@@ -240,21 +240,17 @@ const Establishments: React.FC = () => {
     setSelectedEstablishmentId(id);
   }
   const handleUpdateLanguages = async (establishmentId: any, language: ILanguage) => {
-    // Ensure at least one language remains selected
     const checkedLanguages = Object.values(selectedLanguages).filter(Boolean).length;
     if (checkedLanguages === 1 && selectedLanguages[language]) {
-      // If trying to uncheck the last checked language, do nothing
       return;
     }
   
-    // Toggle the checkbox state and update Firestore with the new state
     setSelectedLanguages((prevState) => {
       const updatedLanguages = {
         ...prevState,
         [language]: !prevState[language],
       };
   
-      // Update Firestore
       if (userId && establishmentId) {
         const showImgRef = doc(db, 'users', userId, 'establishments', establishmentId);
         updateDoc(showImgRef, {
@@ -329,28 +325,28 @@ const Establishments: React.FC = () => {
         </Button>
       </div>
       <Modal title="Languages Establishment" open={isLanguagesModalVisible} onCancel={handleLangugesModalClose} footer={null}>
-      <Checkbox
-        checked={selectedLanguages.am}
-        onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'am') }
-      >
-        Armenian (AM)
-      </Checkbox>
-      <Checkbox
-        checked={selectedLanguages.en}
-        onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'en')}
-      >
-        English (EN)
-      </Checkbox>
-      <Checkbox
-        checked={selectedLanguages.ru}
-        onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'ru')}
-      >
-        Russian (RU)
-      </Checkbox>
-      <Button style={{ marginTop: '10px', width: '100%' }} onClick={handleLangugesModalClose}>
-        Cancel
-      </Button>
-    </Modal>
+        <Checkbox
+          checked={selectedLanguages.am}
+          onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'am') }
+        >
+          Armenian (AM)
+        </Checkbox>
+        <Checkbox
+          checked={selectedLanguages.en}
+          onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'en')}
+        >
+          English (EN)
+        </Checkbox>
+        <Checkbox
+          checked={selectedLanguages.ru}
+          onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'ru')}
+        >
+          Russian (RU)
+        </Checkbox>
+        <Button style={{ marginTop: '10px', width: '100%' }} onClick={handleLangugesModalClose}>
+          Cancel
+        </Button>
+      </Modal>
       <Modal title="Add Establishment" open={isModalVisible} onCancel={handleModalClose} footer={null}>
         <Form form={form} layout="vertical" onFinish={handleAddEstablishment}>
           <Form.Item

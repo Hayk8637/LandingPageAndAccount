@@ -5,7 +5,7 @@ import { doc, updateDoc, getDoc, deleteField } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../../../firebaseConfig';
 import styles from './style.module.css';
-import defimg from './pngwi.png'
+import defimg from '../../../../assets/img/pngwi.png'
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { IEstablishmentStyles, ILanguage, IMenuCategoryItems, ITranslation } from '../../../../interfaces/interfaces';
@@ -114,7 +114,7 @@ const MenuCategoryItems: React.FC = () => {
         imageUrl = await getDownloadURL(storageRef); 
       }
       if(imageUrl === ""){
-        imageUrl = './pngwing 1.png'
+        imageUrl = defimg
       }
       const uniqueId = Date.now().toString();
       const docRef = doc(db, 'users' , userId , 'establishments', establishmentId);
@@ -161,7 +161,7 @@ const MenuCategoryItems: React.FC = () => {
         await uploadTask;
         imageUrl = await getDownloadURL(storageRef);
         if(imageUrl === ""){
-          imageUrl = './pngwing 1.png'
+          imageUrl = defimg
         }
       }
       const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
