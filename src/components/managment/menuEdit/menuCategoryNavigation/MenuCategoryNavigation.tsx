@@ -4,50 +4,22 @@ import styles from './style.module.css';
 import { db } from '../../../../firebaseConfig';
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
-interface Category {
-  id: string; // category ID
-  name: Language; // category name
-}
-
-interface MenuCategoryItem {
-  id: string;
-  name: Language
-  imgUrl: string | null;
-  isVisible: boolean;
-  order: number;
-}
-interface Language {
-    en: string,
-    am: string,
-    ru: string 
-}
-interface EstablishmentStyles {
-  color1: string;
-  color2: string;
-  color3: string;
-  color4: string;
-  color5: string;
-}
-type CurrentLanguage = 'am' | 'en' | 'ru';
+import { ICategory, IEstablishmentStyles, ILanguage, IMenuCategoryItem } from '../../../../interfaces/interfaces';
 
 const MenuCategoryNavigation: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
   const [, setError] = useState<string | null>(null);
-  const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
+  const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
   const pathname = useLocation().pathname || '';
   const currentCategoryName = pathname.split('/').filter(Boolean).pop() || '';
   const establishmentId = pathname.split('/')[pathname.split('/').length - 2] || '';
   const [userId, setUserId] = useState<string | null>(null);  
-  const [currentLanguage, setCurrentLanguage] = useState<CurrentLanguage>('en'); // Default to 'en'
-  
+  const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en'); 
   useEffect(() => {
-    // Check localStorage for the current language
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
       setCurrentLanguage(savedLanguage);
     } else {
-      // If no language is found, set to 'en'
       localStorage.setItem('language', 'en');
     }
   }, [currentLanguage]);
@@ -75,7 +47,7 @@ const MenuCategoryNavigation: React.FC = () => {
               const data = docSnap.data();
               const categories = data.menu?.categories || {};
   
-              const items: MenuCategoryItem[] = Object.entries(categories).map(([id, category]: any) => ({
+              const items: IMenuCategoryItem[] = Object.entries(categories).map(([id, category]: any) => ({
                 id,
                 name: category.name,
                 order: category.order,

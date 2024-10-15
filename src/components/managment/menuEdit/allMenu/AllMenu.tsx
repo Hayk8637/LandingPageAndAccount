@@ -7,61 +7,38 @@ import { db, storage } from '../../../../firebaseConfig';
 import style from './style.module.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { IEstablishmentStyles, ILanguage, IMenuCategoryItem, ITranslation } from '../../../../interfaces/interfaces';
 
-interface MenuCategoryItem {
-  id: string;
-  name: Language
-  imgUrl: string | null;
-  isVisible: boolean;
-  order: number;
-}
-interface Language {
-    en: string,
-    am: string,
-    ru: string 
-}
-interface EstablishmentStyles {
-  color1: string;
-  color2: string;
-  color3: string;
-  color4: string;
-  color5: string;
-  showImg: boolean;
-}
-
-type CurrentLanguage = 'am' | 'en' | 'ru';
 const AllMenu: React.FC = () => {
-  const [menuItems, setMenuItems] = useState<MenuCategoryItem[]>([]);
+  const [menuItems, setMenuItems] = useState<IMenuCategoryItem[]>([]);
   const [, setLoading] = useState(true);
   const [, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [newCategory, setNewCategory] = useState<{ name: Language, imgUrl: string | null , order: number }>({ name: { en:'' ,am: '' , ru:''  }, imgUrl: null , order: 0});
+  const [newCategory, setNewCategory] = useState<{ name: ITranslation, imgUrl: string | null , order: number }>({ name: { en:'' ,am: '' , ru:''  }, imgUrl: null , order: 0});
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
   const [orderModalVisible, setOrderModalVisible] = useState(false);
-  const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
+  const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
   const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
   const pathname = useLocation().pathname || '';
   const establishmentId = pathname.split('/').filter(Boolean).pop() || '';
-  const inputRef = useRef<InputRef | null>(null); // Using Ant Design's Input ref
-  const [currentLanguage, setCurrentLanguage] = useState<CurrentLanguage>('en'); // Default to 'en'
+  const inputRef = useRef<InputRef | null>(null); 
+  const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
   
   useEffect(() => {
-    // Check localStorage for the current language
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
       setCurrentLanguage(savedLanguage);
     } else {
-      // If no language is found, set to 'en'
       localStorage.setItem('language', 'en');
     }
   }, [currentLanguage]);
   useEffect(() => {
     if (isModalVisible && inputRef.current) {
-      inputRef.current.focus(); // Focus the input when the modal opens
+      inputRef.current.focus(); 
     }
   }, [isModalVisible]);
   useEffect(() => {
@@ -89,7 +66,7 @@ const AllMenu: React.FC = () => {
             const data = docSnap.data();
             const categories = data.menu?.categories || {};
 
-            const items: MenuCategoryItem[] = Object.entries(categories).map(([id, category]: any) => ({
+            const items: IMenuCategoryItem[] = Object.entries(categories).map(([id, category]: any) => ({
               id,
               name: category.name,
               order: category.order,
@@ -122,7 +99,7 @@ const AllMenu: React.FC = () => {
   const showOrderModal = () => {
     setOrderModalVisible(true);
   };
-  const showEditModal = (item: MenuCategoryItem) => {
+  const showEditModal = (item: IMenuCategoryItem) => {
     setNewCategory({
       name: {
         en: item.name.en,  
@@ -335,7 +312,7 @@ const AllMenu: React.FC = () => {
   const handleRemoveImage = () => {
     setNewCategory({ ...newCategory, imgUrl: '' }); 
   };
-  const popoverContent = (item: MenuCategoryItem) => (
+  const popoverContent = (item: IMenuCategoryItem) => (
     <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'center' }}>
       <div style={{ marginBottom: 8 }}>
         <Switch checkedChildren="show" unCheckedChildren="don't show" checked={item.isVisible} onChange={(checked) => handleToggleVisibility(item.id, checked)} />

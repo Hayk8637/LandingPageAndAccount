@@ -5,53 +5,7 @@ import { Button, Form, notification, Popover } from 'antd';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
-interface FormValues {
-    wifiname: string;
-    wifipass: string;
-    address: string;
-    currency: string;
-    phone: string;
-}
-
-interface EstablishmentStyles {
-    color1: string;
-    color2: string;
-    color3: string;
-    color4: string;
-    color5: string;
-  }
-
-interface Establishment {
-    id?: string;
-    styles: EstablishmentStyles;
-    languages: {
-        am: boolean,
-        ru: boolean,
-        en: boolean
-    }
-    info: {
-        name: string;
-        wifiname?: string;
-        wifipass?: string;
-        address?: string;
-        phone?: string;
-        logoUrl?: string;
-        bannerUrls?: string[];
-        currency?: string;
-    };
-    menu: {
-        categories?: any[];
-        items?: any[];
-    };
-    uid: string;
-}
-interface Languages {
-    en: boolean;
-    ru: boolean;
-    am: boolean;
-  }
-  
+import { IEstablishment, IEstablishmentStyles, IInfoValues, ILanguages } from '../../../../interfaces/interfaces';
 
 const HeaderMenu: React.FC = () => {
     var currentPath = useLocation().pathname || '';
@@ -61,10 +15,10 @@ const HeaderMenu: React.FC = () => {
     const pathname = useLocation().pathname || '';
     const pathArray = pathname.split('/');
     const establishmentId = pathArray[pathArray.length - 2];
-    const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
+    const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
     const [textColor, setTextColor] = useState(`#${establishmentStyles?.color2}`);
     const [userId, setUserId] = useState<string | null>(null);
-    const [languages, setLanguages] = useState< Languages | null>(null);
+    const [languages, setLanguages] = useState< ILanguages | null>(null);
     const [currentLanguage, setCurrentLanguage] = useState<string>('en'); // Default to 'en'
 
     useEffect(() => {
@@ -82,7 +36,7 @@ const HeaderMenu: React.FC = () => {
         localStorage.setItem('language', language); // Save the new language in localStorage
         window.location.reload(); // Refresh the page
     };
-    const [popoverData, setPopoverData] = useState<FormValues>({
+    const [popoverData, setPopoverData] = useState<IInfoValues>({
         wifiname: '',
         wifipass: '',
         address: '',
@@ -111,7 +65,7 @@ const HeaderMenu: React.FC = () => {
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    const data = docSnap.data() as Establishment;
+                    const data = docSnap.data() as IEstablishment;
                     setLogoUrl(data.info?.logoUrl || '/default-logo.png');
                     setPopoverData({
                         wifiname: data.info?.wifiname || '',
@@ -190,7 +144,7 @@ const HeaderMenu: React.FC = () => {
             onChange={(e) => handleLanguageChange(e.target.value)}
           >
             {Object.keys(languages)
-              .filter((lang) => languages[lang as keyof Languages])
+              .filter((lang) => languages[lang as keyof ILanguages])
               .map((language) => (
                 <option
                   key={language}

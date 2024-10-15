@@ -44,7 +44,6 @@ const AccountSettings: React.FC = () => {
       setEmailVerified(user.emailVerified);
     }
   };
-
   const handleVerifyEmail = async () => {
     setLoading(true);
     try {

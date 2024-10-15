@@ -5,8 +5,9 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { useTranslation } from 'react-i18next';
 
+
 const logos = [
-  '/img/image54.png',
+  '../../../assets/',
   '/img/image54.png',
   '/img/image54.png',
   '/img/image54.png',
@@ -65,14 +66,13 @@ const Partners: React.FC = () => {
       <Slider {...settings}>
         {logos.map((logo, index) => (
           <div key={index} className={style.logoContainer}>
-            {/* Using a regular img tag instead of next/image */}
             <img
               src={logo}
               alt={`Partner logo ${index + 1}`}
               width={150}
               height={100}
               className={style.logo}
-              style={{ objectFit: 'contain' }} // Added style for object fit
+              style={{ objectFit: 'contain' }}
             />
           </div>
         ))}

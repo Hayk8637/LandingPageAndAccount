@@ -6,59 +6,9 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } f
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import styles from './style.module.css';
 import { useLocation } from 'react-router-dom';
+import { IEstablishment, IEstablishmentStyles, IInfoValues, ILanguages } from '../../../../interfaces/interfaces';
 
 
-interface FormValues {
-  wifiname: string;
-  wifipass: string;
-  address: string;
-  currency: string;
-  phone: string;
-}
-interface EstablishmentStyles {
-  color1: string;
-  color2: string;
-  color3: string;
-  color4: string;
-  color5: string;
-}
-
-interface Establishment {
-  id?: string;
-  languages: {
-    en: boolean,
-    ru: boolean,
-    am: boolean
-  }
-  styles: {
-    color1: string;
-    color2: string;
-    color3: string;
-    color4: string;
-    color5: string;
-  },
-  info: {
-    name: string;
-    wifiname?: string;
-    wifipass?: string;
-    address?: string;
-    phone?: string;
-    logoUrl?: string;
-    bannerUrls?: string[];
-    currency?: string;
-  };
-  menu: {
-    categories?: any[];
-    items?: any[];
-  };
-  uid: string;
-}
-  
-interface Languages {
-  en: boolean;
-  ru: boolean;
-  am: boolean;
-}
 
 const Header: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,31 +18,28 @@ const Header: React.FC = () => {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const establishmentId = currentPath.split('/').filter(Boolean).pop() || '';
-  const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
+  const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
   const [textColor, setTextColor] = useState(`#${establishmentStyles?.color2 || 'white'}`);
   const [userId, setUserId] = useState<string | null>(null);
-  const [languages, setLanguages] = useState< Languages | null>(null);
-  const [popoverData, setPopoverData] = useState<FormValues>({
+  const [languages, setLanguages] = useState< ILanguages | null>(null);
+  const [popoverData, setPopoverData] = useState<IInfoValues>({
     wifiname: '',
     wifipass: '',
     address: '',
     phone: '',
     currency: '',
   });
-  const [currentLanguage, setCurrentLanguage] = useState<string>('en'); // Default to 'en'
+  const [currentLanguage, setCurrentLanguage] = useState<string>('en');
 
   useEffect(() => {
-    // Check localStorage for the current language
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage) {
       setCurrentLanguage(savedLanguage);
     } else {
-      // If no language is found, set to 'en'
       localStorage.setItem('language', 'en');
     }
   }, []);
   useEffect(() => {
-    // Fallback to a default language if currentLanguage is not set
     if (!currentLanguage) {
       if (languages?.en) {
         setCurrentLanguage('en');
@@ -105,8 +52,8 @@ const Header: React.FC = () => {
   }, [currentLanguage, languages]);
   const handleLanguageChange = (language: string) => {
     setCurrentLanguage(language);
-    localStorage.setItem('language', language); // Save the new language in localStorage
-    window.location.reload(); // Refresh the page
+    localStorage.setItem('language', language);
+    window.location.reload(); 
 };
 
   useEffect(() => {
@@ -135,7 +82,7 @@ const Header: React.FC = () => {
           const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
-            const data = docSnap.data() as Establishment;
+            const data = docSnap.data() as IEstablishment;
             setLogoUrl(data.info?.logoUrl || './MBQR Label-03.png');
             setPopoverData({
               wifiname: data.info?.wifiname || '',
@@ -150,14 +97,6 @@ const Header: React.FC = () => {
               am: data.languages.am,
               ru: data.languages.ru
              })
-            // Uncomment if you need to set form fields
-            // form.setFieldsValue({
-            //   wifiname: data.info?.wifiname || '',
-            //   wifipass: data.info?.wifipass || '',
-            //   address: data.info?.address || '',
-            //   currency: data.info?.currency || '',
-            //   phone: data.info?.phone || '',
-            // });
           } else {
             notification.error({ message: 'Error', description: 'Document does not exist' });
           }
@@ -185,7 +124,7 @@ const Header: React.FC = () => {
     form.resetFields();
   };
 
-  const handleFormSubmit = async (values: FormValues) => {
+  const handleFormSubmit = async (values: IInfoValues) => {
     if (!establishmentId) {
       notification.error({ message: 'Error', description: 'Establishment ID is not set' });
       return;
@@ -316,7 +255,7 @@ const Header: React.FC = () => {
             onChange={(e) => handleLanguageChange(e.target.value)}
           >
             {Object.keys(languages)
-              .filter((lang) => languages[lang as keyof Languages])
+              .filter((lang) => languages[lang as keyof ILanguages])
               .map((language) => (
                 <option
                   key={language}

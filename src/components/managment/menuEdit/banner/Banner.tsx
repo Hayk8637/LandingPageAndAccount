@@ -8,18 +8,8 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../../../firebaseConfig';
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { IBannerImage, IEstablishmentStyles } from '../../../../interfaces/interfaces';
 
-interface BannerImage {
-  id: string;
-  url: string;
-}
-interface EstablishmentStyles {
-  color1: string;
-  color2: string;
-  color3: string;
-  color4: string;
-  color5: string;
-}
 
 const contentStyle: React.CSSProperties = {
   height: '200px',
@@ -30,12 +20,12 @@ const contentStyle: React.CSSProperties = {
 };
 
 const Banner: React.FC = () => {
-  const [bannerImages, setBannerImages] = useState<BannerImage[]>([]);
+  const [bannerImages, setBannerImages] = useState<IBannerImage[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [, setUploading] = useState(false);
   const pathname = useLocation().pathname || '';
   const establishmentId = pathname.split('/').filter(Boolean).pop() || '';
-  const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
+  const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
   const [userId, setUserId] = useState<string | null>(null);
 
   const showModal = () => {
@@ -115,7 +105,7 @@ const Banner: React.FC = () => {
             await updateDoc(docRef, {
               [`info.bannerUrls.${uniqueId}`]: downloadURL,
             });
-            const newBannerImage: BannerImage = { id: uniqueId, url: downloadURL };
+            const newBannerImage: IBannerImage = { id: uniqueId, url: downloadURL };
             setBannerImages((prev) => [...prev, newBannerImage]);
             notification.success({ message: 'Success', description: 'Banner uploaded successfully.' });
           }

@@ -9,6 +9,7 @@ import { onAuthStateChanged, User, signOut } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import { UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import logo from  '../../../assets/logo/logo.png'
 
 const Nav: React.FC = () => {
   const { t, i18n } = useTranslation("global");
@@ -65,12 +66,13 @@ const Nav: React.FC = () => {
       console.error('Sign out error:', error);
     }
   };
+
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     if (e.key === 'logout') {
       handleSignOut(); // Trigger sign-out when "Logout" is clicked
     }
   };
-
+  
   const menuItems: MenuProps['items'] = [
     {
       key: 'personal-account',
@@ -91,7 +93,7 @@ const Nav: React.FC = () => {
       <nav className={style.nav}>
         <div className={style.left}>
           <a href='/'>
-            <img src="/logo/logo.png" alt={t('logo')} width={150} height={50} style={{ width: "auto", height: "auto" }} />
+            <img src={logo} alt={t('logo')} width={150} height={50} style={{ width: "auto", height: "auto" }} />
           </a>
         </div>
         <div className={style.right}>

@@ -8,35 +8,16 @@ import styles from './style.module.css';
 import defimg from './pngwi.png'
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-interface Language {
-  en: string,
-  am: string,
-  ru: string 
-}
-interface MenuCategoryItem {
-  id: string;
-  name: Language;
-  img: string | null;
-  price: number;
-  isVisible: boolean;
-  order: number
-}
-interface EstablishmentStyles {
-  showImg: boolean;
-  color1: string;
-  color2: string;
-  color3: string;
-  color4: string;
-  color5: string;
-}
-type CurrentLanguage = 'am' | 'en' | 'ru';
+import { IEstablishmentStyles, ILanguage, IMenuCategoryItems, ITranslation } from '../../../../interfaces/interfaces';
+
+
 
 const MenuCategoryItems: React.FC = () => {
-  const [menuItems, setMenuItems] = useState<MenuCategoryItem[]>([]);
+  const [menuItems, setMenuItems] = useState<IMenuCategoryItems[]>([]);
   const [, setError] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [newItem, setNewItem] = useState<Partial<MenuCategoryItem> & { name: Language , img?: string | null }>({ 
+  const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & { name: ITranslation , img?: string | null }>({ 
     name: { en: '', am: '', ru: '' },
     img: null,
     order: 0,
@@ -45,21 +26,19 @@ const MenuCategoryItems: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
   const [orderModalVisible, setOrderModalVisible] = useState(false);
-  const [establishmentStyles, setEstablishmentStyles] = useState<EstablishmentStyles>();
+  const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
   const [currency, setCurrency] = useState<string>('$');
   const pathname = useLocation().pathname || '';
   const establishmentId = pathname.split('/')[pathname.split('/').length - 2];
   const categoryId = pathname.split('/')[pathname.split('/').length - 1];
   const [userId, setUserId] = useState<string | null>(null);  
-  const [currentLanguage, setCurrentLanguage] = useState<CurrentLanguage>('en'); // Default to 'en'
+  const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
   
   useEffect(() => {
-    // Check localStorage for the current language
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
       setCurrentLanguage(savedLanguage);
     } else {
-      // If no language is found, set to 'en'
       localStorage.setItem('language', 'en');
     }
   }, [currentLanguage]);
@@ -88,7 +67,7 @@ const MenuCategoryItems: React.FC = () => {
             const menuItems = data.menu?.items || {};
             const categoryItems = menuItems[categoryId] || {};
     
-            const items: MenuCategoryItem[] = Object.entries(categoryItems).map(
+            const items: IMenuCategoryItems[] = Object.entries(categoryItems).map(
               ([id, menuItem]: any) => ({
                 id,
                 name: menuItem.name,
@@ -174,10 +153,6 @@ const MenuCategoryItems: React.FC = () => {
     setUploading(true);
 
     try {
-      // const updatedData: Partial<MenuCategoryItem> = {
-      //   name: newItem.name,
-      //   price: newItem.price,
-      // };
       let imageUrl = '';
       if (imageFile) {
         const imgId = Date.now().toString();
@@ -191,8 +166,8 @@ const MenuCategoryItems: React.FC = () => {
       }
       const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
       const updatedName = {
-        ...newItem.name, // Keep existing values for other languages
-        [currentLanguage]: newItem.name[currentLanguage], // Update the current language
+        ...newItem.name,
+        [currentLanguage]: newItem.name[currentLanguage],
       };
       await updateDoc(docRef, {
         [`menu.items.${categoryId}.${currentEditingId}`]: {
@@ -235,13 +210,13 @@ const MenuCategoryItems: React.FC = () => {
       await updateDoc(docRef, {
         [`menu.items.${categoryId}.${id}`]: deleteField(),
       });
-      setMenuItems((prev) => prev.filter(item => item.id !== id)); // Remove the item from state
+      setMenuItems((prev) => prev.filter(item => item.id !== id));
       message.success('Item deleted successfully');
     } catch (error) {
       message.error('Failed to delete item');
     }
   };
-  const popoverContent = (item: MenuCategoryItem) => (
+  const popoverContent = (item: IMenuCategoryItems) => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ marginBottom: 8 }}>
         <span>Visibility:</span>
@@ -259,7 +234,7 @@ const MenuCategoryItems: React.FC = () => {
             name: item.name,
             price: item.price,
             img: item.img
-          }); // Set the item data to the state
+          });
           setEditModalVisible(true); 
         }} 
         style={{ marginBottom: 8 }}>
@@ -391,7 +366,7 @@ const MenuCategoryItems: React.FC = () => {
             name: {
               ...newItem.name,
               [currentLanguage]: e.target.value || '',
-            } as Language, // Type assertion to satisfy the type checker
+            } as ITranslation, 
           })
         }
       />
@@ -408,7 +383,7 @@ const MenuCategoryItems: React.FC = () => {
       <Upload
         beforeUpload={(file) => {
           setImageFile(file);
-          return false; // Prevent auto upload
+          return false; 
         }}
         maxCount={1}
         listType="picture"
@@ -439,7 +414,7 @@ const MenuCategoryItems: React.FC = () => {
           name: {
             ...newItem.name,
             [currentLanguage]: e.target.value || '',
-          } as Language, // Type assertion to satisfy the type checker
+          } as ITranslation, 
         })}
       />
     </Form.Item>
@@ -455,7 +430,7 @@ const MenuCategoryItems: React.FC = () => {
       <Upload
         beforeUpload={(file) => {
           setImageFile(file);
-          return false; // Prevent auto upload
+          return false; 
         }}
         maxCount={1}
         listType='picture'

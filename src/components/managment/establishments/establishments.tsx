@@ -6,54 +6,17 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import styles from './style.module.css';
 import { redirect } from 'react-router-dom';
-
-interface Establishment {
-  id?: string;
-  styles: {
-    showImg: boolean;
-    color1: string;
-    color2: string;
-    color3: string;
-    color4: string;
-    color5: string;
-  };
-  languages: {
-    am: boolean,
-    ru: boolean,
-    en: boolean
-  }
-  info: {
-    name: string;
-    wifiname?: string;
-    wifipass?: string;
-    address?: string;
-    logoUrl: string;
-    bannerUrls?: string[];
-    currency?: string;
-  };
-  menu: {
-    categories?: any[];
-    items?: any[];
-  };
-  uid: string;
-}
-type Language = 'am' | 'en' | 'ru';
-interface Languages {
-  am: boolean;
-  ru: boolean;
-  en: boolean;
-}
+import { IEstablishment, ILanguage, ILanguages } from '../../../interfaces/interfaces';
 
 const Establishments: React.FC = () => {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isStylesModalVisible, setIsStylesModalVisible] = useState(false);
   const [isQrLinkModalVisible, setIsQrLinkModalVisible] = useState(false);
-  const [ isLanguagesModalVisible , setIsLanguagesModalVisible ] = useState(false);
-  const [establishments, setEstablishments] = useState<Establishment[]>([]);
+  const [isLanguagesModalVisible , setIsLanguagesModalVisible ] = useState(false);
+  const [establishments, setEstablishments] = useState<IEstablishment[]>([]);
   const [bannerFiles, setBannerFiles] = useState<File[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
-
   const [selectedEstablishmentId, setSelectedEstablishmentId] = useState<string | null>(null);
   const [selectedColors, setSelectedColors] = useState({
     color1: '#ffffff',
@@ -95,9 +58,9 @@ const Establishments: React.FC = () => {
         );
   
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-          const items: Establishment[] = [];
+          const items: IEstablishment[] = [];
           querySnapshot.forEach((doc) => {
-            const data = doc.data() as Establishment;
+            const data = doc.data() as IEstablishment;
   
             items.push({
               ...data,
@@ -133,7 +96,7 @@ const Establishments: React.FC = () => {
   
         await Promise.all(uploadPromises);
   
-        const establishment: Establishment = {
+        const establishment: IEstablishment = {
           styles: {
             showImg: true,
             color1: '1',
@@ -230,7 +193,7 @@ const Establishments: React.FC = () => {
   const handleQrLinkModalClose = () => {
     setIsQrLinkModalVisible(false);
   };
-  const handleColorChange = (color: string, colorKey: keyof Establishment['styles']) => {
+  const handleColorChange = (color: string, colorKey: keyof IEstablishment['styles']) => {
     setSelectedColors((prevColors) => ({ ...prevColors, [colorKey]: color }));
   };
   const handleSaveStyles = async () => {
@@ -269,14 +232,14 @@ const Establishments: React.FC = () => {
           [`styles.showImg`]: isVisible,
         });} 
     };
- const handleLanguagesModalOpen = (id: string , language: Languages) => {
+ const handleLanguagesModalOpen = (id: string , language: ILanguages) => {
     setIsQrLinkModalVisible(false);
     setIsStylesModalVisible(false);
     setSelectedLanguages(language)
     setIsLanguagesModalVisible(true);
     setSelectedEstablishmentId(id);
   }
-  const handleUpdateLanguages = async (establishmentId: any, language: Language) => {
+  const handleUpdateLanguages = async (establishmentId: any, language: ILanguage) => {
     // Ensure at least one language remains selected
     const checkedLanguages = Object.values(selectedLanguages).filter(Boolean).length;
     if (checkedLanguages === 1 && selectedLanguages[language]) {
