@@ -19,22 +19,19 @@ const HeaderMenu: React.FC = () => {
     const [textColor, setTextColor] = useState(`#${establishmentStyles?.color2}`);
     const [userId, setUserId] = useState<string | null>(null);
     const [languages, setLanguages] = useState< ILanguages | null>(null);
-    const [currentLanguage, setCurrentLanguage] = useState<string>('en'); // Default to 'en'
-
+    const [currentLanguage, setCurrentLanguage] = useState<string>('en');
     useEffect(() => {
-      // Check localStorage for the current language
       const savedLanguage = localStorage.getItem('language');
       if (savedLanguage) {
         setCurrentLanguage(savedLanguage);
       } else {
-        // If no language is found, set to 'en'
         localStorage.setItem('language', 'en');
       }
     }, []);
     const handleLanguageChange = (language: string) => {
         setCurrentLanguage(language);
-        localStorage.setItem('language', language); // Save the new language in localStorage
-        window.location.reload(); // Refresh the page
+        localStorage.setItem('language', language);
+        window.location.reload();
     };
     const [popoverData, setPopoverData] = useState<IInfoValues>({
         wifiname: '',
@@ -160,16 +157,16 @@ const HeaderMenu: React.FC = () => {
           </select>
         ) : null}
                 <Popover placement="bottomRight" style={{padding:'15px'}} title="Establishment Info" content={popoverContent} arrow>
-                <Button type="link" className={styles.info}
-                    style={{ color: textColor }}
-                    onMouseEnter={() => setTextColor(`#${establishmentStyles?.color3}`)}
-                    onMouseLeave={() => setTextColor(`#${establishmentStyles?.color2}`)}
-                    onFocus={() => setTextColor(`#${establishmentStyles?.color3}`)}
-                    onBlur={() => setTextColor(`#${establishmentStyles?.color2}`)} 
-                    onMouseDown={() => setTextColor(`#${establishmentStyles?.color3}`)} 
-                    onMouseUp={() => setTextColor(`#${establishmentStyles?.color3}`)}  >
-                <InfoCircleOutlined style={{color: `#${establishmentStyles?.color2}`}} />
-              </Button>
+                  <Button type="link" className={styles.info}
+                      style={{ color: textColor }}
+                      onMouseEnter={() => setTextColor(`#${establishmentStyles?.color3}`)}
+                      onMouseLeave={() => setTextColor(`#${establishmentStyles?.color2}`)}
+                      onFocus={() => setTextColor(`#${establishmentStyles?.color3}`)}
+                      onBlur={() => setTextColor(`#${establishmentStyles?.color2}`)} 
+                      onMouseDown={() => setTextColor(`#${establishmentStyles?.color3}`)} 
+                      onMouseUp={() => setTextColor(`#${establishmentStyles?.color3}`)}  >
+                  <InfoCircleOutlined style={{color: `#${establishmentStyles?.color2}`}} />
+                </Button>
                 </Popover>
             </div>
         </div>
