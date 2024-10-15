@@ -38,7 +38,11 @@ interface Establishment {
   uid: string;
 }
 type Language = 'am' | 'en' | 'ru';
-
+interface Languages {
+  am: boolean;
+  ru: boolean;
+  en: boolean;
+}
 
 const Establishments: React.FC = () => {
   const [form] = Form.useForm();
@@ -59,7 +63,7 @@ const Establishments: React.FC = () => {
     color5: '#ffffff',
   });
   const [selectedLanguages, setSelectedLanguages] = useState({
-    am: true, // Defaulting 'am' to true to ensure at least one is selected
+    am: true,
     en: false,
     ru: false,
   });
@@ -98,6 +102,7 @@ const Establishments: React.FC = () => {
             items.push({
               ...data,
               id: doc.id,
+              languages: data.languages,
               info: {
                 ...data.info, // Preserve existing info properties
                 logoUrl: data.info.logoUrl || './MBQR Label-03.png' // Ensure logoUrl is included
@@ -264,10 +269,11 @@ const Establishments: React.FC = () => {
           [`styles.showImg`]: isVisible,
         });} 
     };
- const handleLanguagesModalOpen = (id: string) => {
+ const handleLanguagesModalOpen = (id: string , language: Languages) => {
     setIsQrLinkModalVisible(false);
     setIsStylesModalVisible(false);
-    setIsLanguagesModalVisible(true)
+    setSelectedLanguages(language)
+    setIsLanguagesModalVisible(true);
     setSelectedEstablishmentId(id);
   }
   const handleUpdateLanguages = async (establishmentId: any, language: Language) => {
@@ -328,7 +334,7 @@ const Establishments: React.FC = () => {
                   <Button className={styles.editButtons} onClick={() => handleStylesModalOpen(establishment.id!)}>
                     Styles
                   </Button>
-                  <Button className={styles.editButtons} onClick={() => handleLanguagesModalOpen(establishment.id!)} >
+                  <Button className={styles.editButtons} onClick={() => handleLanguagesModalOpen(establishment.id! , establishment.languages)} >
                     Languages
                   </Button>
                   <Button className={styles.editButtons} icon={<QrcodeOutlined />} onClick={() => handleQrLinkModalOpen(establishment.id!)}>
