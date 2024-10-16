@@ -123,8 +123,6 @@ const Banner: React.FC = () => {
 
     return false;
   };
-
-
   const handleDelete = async (id: string) => {
     if (userId && establishmentId) {
       try {

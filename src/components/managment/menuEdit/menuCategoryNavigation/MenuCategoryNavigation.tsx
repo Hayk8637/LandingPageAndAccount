@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { doc, getDoc } from 'firebase/firestore'; // Import Firestore functions
+import { doc, getDoc } from 'firebase/firestore';
 import styles from './style.module.css';
 import { db } from '../../../../firebaseConfig';
 import { useLocation } from 'react-router-dom';

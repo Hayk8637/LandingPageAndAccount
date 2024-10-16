@@ -27,7 +27,6 @@ const AllMenu: React.FC = () => {
   const establishmentId = pathname.split('/').filter(Boolean).pop() || '';
   const inputRef = useRef<InputRef | null>(null); 
   const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
-  
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
@@ -54,8 +53,6 @@ const AllMenu: React.FC = () => {
 
     return () => unsubscribeAuth();
   }, []);
-
-
   useEffect(() => {
     const fetchMenuItems = async () => {
       if (userId && establishmentId) {
@@ -65,7 +62,6 @@ const AllMenu: React.FC = () => {
           if (docSnap.exists()) {
             const data = docSnap.data();
             const categories = data.menu?.categories || {};
-
             const items: IMenuCategoryItem[] = Object.entries(categories).map(([id, category]: any) => ({
               id,
               name: category.name,
@@ -74,10 +70,7 @@ const AllMenu: React.FC = () => {
               isVisible: category.isVisible ?? true,
             }));
             await setEstablishmentStyles(data.styles);
-
-
             items.sort((a, b) => a.order - b.order);
-            
             setMenuItems(items);
           } else {
             setError('No categories found');
@@ -131,16 +124,13 @@ const AllMenu: React.FC = () => {
       message.error('Missing user or establishment information');
       return;
     }
-  
     setUploading(true);
     try {
       let imgUrl = '';
-  
       if (imageFile?.name) {
         const uniqueId = Date.now().toString();
         const storageRef = ref(storage, `establishments/${establishmentId}/categories/${uniqueId}`);
         const uploadTask = uploadBytesResumable(storageRef, imageFile);
-  
         await new Promise<void>((resolve, reject) => {
           uploadTask.on(
             'state_changed',
@@ -156,7 +146,6 @@ const AllMenu: React.FC = () => {
           );
         });
       }
-  
       const uniqueId = Date.now().toString();
       const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
       await updateDoc(docRef, {
@@ -174,7 +163,6 @@ const AllMenu: React.FC = () => {
       await updateDoc(docRef, {
         [`menu.items.${uniqueId}`]: {},
       });
-  
       setMenuItems((prev) => [
         ...prev,
         {
@@ -189,7 +177,6 @@ const AllMenu: React.FC = () => {
           order: menuItems.length
         },
       ]);
-  
       message.success('Category created successfully');
       handleCancel();
     } catch (error) {
@@ -198,25 +185,20 @@ const AllMenu: React.FC = () => {
       setUploading(false);
     }
   };
-  
   const handleEditSubmit = async () => {
     if (!newCategory.name[currentLanguage]) {
       message.error('Category name is required for the current language');
       return;
     }
-  
     if (!userId || !establishmentId || !currentEditingId) {
       message.error('Missing user or establishment information');
       return;
     }
-  
     let imgUrl = newCategory.imgUrl || '';
-  
     if (imageFile) {
       const uniqueId = Date.now().toString();
       const storageRef = ref(storage, `establishments/${establishmentId}/categories/${uniqueId}`);
       const uploadTask = uploadBytesResumable(storageRef, imageFile);
-  
       await new Promise<void>((resolve, reject) => {
         uploadTask.on(
           'state_changed',
@@ -232,15 +214,12 @@ const AllMenu: React.FC = () => {
         );
       });
     }
-  
     setUploading(true);
     try {
       const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
-  
-      // Update the current language while keeping the other languages unchanged
       const updatedName = {
-        ...newCategory.name, // Keep existing values for other languages
-        [currentLanguage]: newCategory.name[currentLanguage], // Update the current language
+        ...newCategory.name,
+        [currentLanguage]: newCategory.name[currentLanguage],
       };
   
       await updateDoc(docRef, {
@@ -251,9 +230,7 @@ const AllMenu: React.FC = () => {
           isVisible: true,
         },
       });
-  
-      // Update the local state with the new name and imgUrl for the edited item
-      const updatedItems = menuItems.map(item => 
+        const updatedItems = menuItems.map(item => 
         item.id === currentEditingId ? { ...item, name: updatedName, imgUrl, order: item.order } : item
       );
   
