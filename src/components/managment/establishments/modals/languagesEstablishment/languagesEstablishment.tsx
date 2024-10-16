@@ -1,5 +1,5 @@
 import { Button, Checkbox, Modal } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ILanguage, ILanguages } from '../../../../../interfaces/interfaces';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../../../firebaseConfig';
@@ -12,7 +12,10 @@ interface ILanguagesEstablishmentProps {
     userId: any;
 }
 const LanguagesEstablishment:React.FC<ILanguagesEstablishmentProps> = ({isModalVisible , onCancel , selectedLanguages , selectedEstablishmentId , userId}) => {
-    const [selectedLanguagesNow, setSelectedLanguages] = useState({
+  useEffect(() => {
+    setSelectedLanguages(selectedLanguages);
+  }, [selectedLanguages]);
+  const [selectedLanguagesNow, setSelectedLanguages] = useState({
         am: selectedLanguages.am,
         en: selectedLanguages.en,
         ru: selectedLanguages.ru,

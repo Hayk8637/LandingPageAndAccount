@@ -4,7 +4,7 @@ import { FileAddOutlined, DeleteOutlined, EditOutlined, QrcodeOutlined } from '@
 import { getFirestore, collection, query, where, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import styles from './style.module.css';
-import { IEstablishment, ILanguages } from '../../../interfaces/interfaces';
+import { IEstablishment, IEstablishmentStyles, ILanguages } from '../../../interfaces/interfaces';
 import AddEstablishment from './modals/addEstablishment/addEstablishment'
 import LanguagesEstablishment from './modals/languagesEstablishment/languagesEstablishment';
 import EditStyles from './modals/editStyles/editStyles';
@@ -18,7 +18,14 @@ const Establishments: React.FC = () => {
   const [establishments, setEstablishments] = useState<IEstablishment[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedEstablishmentId, setSelectedEstablishmentId] = useState<string | null>(null);
-  const [selectedColors, setSelectedColors] = useState({color1: '#ffffff', color2: '#ffffff', color3: '#ffffff', color4: '#ffffff', color5: '#ffffff' ,showImg: false});
+  const [selectedColors, setSelectedColors] = useState<IEstablishmentStyles>({
+    color1: '#ffffff',
+    color2: '#ffffff',
+    color3: '#ffffff',
+    color4: '#ffffff',
+    color5: '#ffffff',
+    showImg: false,
+  });  
   const [selectedLanguages, setSelectedLanguages] = useState({am: true, en: false, ru: false, });
   const auth = getAuth();
   const db = getFirestore();
@@ -36,6 +43,8 @@ const Establishments: React.FC = () => {
 
     return () => unsubscribeAuth();
   }, []);
+  useEffect(() => {
+  }, [selectedColors]);
 
   useEffect(() => {
     const fetchEstablishments = async () => {
@@ -54,6 +63,7 @@ const Establishments: React.FC = () => {
               ...data,
               id: doc.id,
               languages: data.languages,
+              styles: data.styles,
               info: {
                 ...data.info,
                 logoUrl: data.info.logoUrl || './MBQR Label-03.png'
@@ -101,23 +111,22 @@ const Establishments: React.FC = () => {
     setSelectedEstablishmentId(id);
   };
 
-  const handleStylesModalOpen = (id: string) => {
+  const handleStylesModalOpen = async (id: string) => {
     handleModalClose();
-    setIsStylesModalVisible(true);
-    setSelectedEstablishmentId(id);
     const selectedEstablishment = establishments.find((est) => est.id === id);
     if (selectedEstablishment) {
-      const { color1, color2, color3, color4, color5 , showImg} = selectedEstablishment.styles;
-      setSelectedColors({
-        color1: color1 || '#ffffff',
-        color2: color2 || '#ffffff',
-        color3: color3 || '#ffffff',
-        color4: color4 || '#ffffff',
-        color5: color5 || '#ffffff',
-        showImg: showImg || false
-      });
+        const styles = selectedEstablishment.styles;
+        setSelectedColors((prevColors) => ({
+            ...prevColors, 
+            ...styles
+        }));
     }
-  };
+
+    setIsStylesModalVisible(true);
+    setSelectedEstablishmentId(id);
+};
+
+  
 
  const handleLanguagesModalOpen = (id: string , language: ILanguages) => {
     handleModalClose()
@@ -155,7 +164,7 @@ const Establishments: React.FC = () => {
               content={
                 <div>
                   <Switch checkedChildren="With IMG" unCheckedChildren="Without IMG" checked={establishment.styles.showImg} onChange={(checked) => handleToggleShowImg(establishment.id, checked)} />
-                  <Button className={styles.editButtons} onClick={() => handleStylesModalOpen(establishment.id!)}>
+                  <Button className={styles.editButtons} onClick={() => handleStylesModalOpen(establishment.id! )}>
                     Styles
                   </Button>
                   <Button className={styles.editButtons} onClick={() => handleLanguagesModalOpen(establishment.id! , establishment.languages)} >
@@ -194,6 +203,7 @@ const Establishments: React.FC = () => {
       <LanguagesEstablishment isModalVisible={isLanguagesModalVisible} onCancel={handleModalClose} selectedLanguages={selectedLanguages} selectedEstablishmentId={selectedEstablishmentId} userId={userId} />
       <EditStyles isModalVisible={isStylesModalVisible} onCancel={handleModalClose} selectedColors={selectedColors} selectedEstablishmentId={selectedEstablishmentId} userId={userId} />
       <QrOrLink isModalVisible={isQrLinkModalVisible} onCancel={handleModalClose} selectedEstablishmentId={selectedEstablishmentId} userId={userId}/>
+        
     </div>
     </>
   );
