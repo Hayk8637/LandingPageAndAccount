@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, notification, Modal, Popconfirm, Popover, QRCode, ColorPicker, Switch, Checkbox } from 'antd';
+import { Form, Button, Popconfirm, Popover, Switch } from 'antd';
 import { FileAddOutlined, DeleteOutlined, EditOutlined, QrcodeOutlined } from '@ant-design/icons';
-import { getFirestore, collection, addDoc, query, where, onSnapshot, doc, deleteDoc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, where, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import styles from './style.module.css';
-import { redirect } from 'react-router-dom';
-import { IEstablishment, ILanguage, ILanguages } from '../../../interfaces/interfaces';
-
+import { IEstablishment, ILanguages } from '../../../interfaces/interfaces';
+import AddEstablishment from './modals/addEstablishment/addEstablishment'
+import LanguagesEstablishment from './modals/languagesEstablishment/languagesEstablishment';
+import EditStyles from './modals/editStyles/editStyles';
+import QrOrLink from './modals/qrOrLink/qrOrLink';
 const Establishments: React.FC = () => {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -15,25 +16,12 @@ const Establishments: React.FC = () => {
   const [isQrLinkModalVisible, setIsQrLinkModalVisible] = useState(false);
   const [isLanguagesModalVisible , setIsLanguagesModalVisible ] = useState(false);
   const [establishments, setEstablishments] = useState<IEstablishment[]>([]);
-  const [bannerFiles, setBannerFiles] = useState<File[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedEstablishmentId, setSelectedEstablishmentId] = useState<string | null>(null);
-  const [selectedColors, setSelectedColors] = useState({
-    color1: '#ffffff',
-    color2: '#ffffff',
-    color3: '#ffffff',
-    color4: '#ffffff',
-    color5: '#ffffff',
-  });
-  const [selectedLanguages, setSelectedLanguages] = useState({
-    am: true,
-    en: false,
-    ru: false,
-  });
+  const [selectedColors, setSelectedColors] = useState({color1: '#ffffff', color2: '#ffffff', color3: '#ffffff', color4: '#ffffff', color5: '#ffffff' ,showImg: false});
+  const [selectedLanguages, setSelectedLanguages] = useState({am: true, en: false, ru: false, });
   const auth = getAuth();
   const db = getFirestore();
-  const storage = getStorage();
-  const user = auth.currentUser;
   useEffect(() => {
     const auth = getAuth();
     
@@ -67,8 +55,8 @@ const Establishments: React.FC = () => {
               id: doc.id,
               languages: data.languages,
               info: {
-                ...data.info, // Preserve existing info properties
-                logoUrl: data.info.logoUrl || './MBQR Label-03.png' // Ensure logoUrl is included
+                ...data.info,
+                logoUrl: data.info.logoUrl || './MBQR Label-03.png'
               }
             });
           });
@@ -82,87 +70,7 @@ const Establishments: React.FC = () => {
     fetchEstablishments();
   }, [userId, db]);
   
-  const handleAddEstablishment = async (values: any) => {
-    try {
-      const user = auth.currentUser;
-      if (user) {
-        const bannerUrls: string[] = [];
-        const uploadPromises = bannerFiles.map(async (file) => {
-          const storageRef = ref(storage, `banners/${user.uid}/${file.name}`);
-          const snapshot = await uploadBytes(storageRef, file);
-          const url = await getDownloadURL(snapshot.ref);
-          bannerUrls.push(url);
-        });
-  
-        await Promise.all(uploadPromises);
-  
-        const establishment: IEstablishment = {
-          styles: {
-            showImg: true,
-            color1: '1',
-            color2: '2',
-            color3: '3',
-            color4: '4',
-            color5: '5',
-          },
-          languages: {
-            am: true,
-            ru: true,
-            en: true
-          },
-          info: {
-            name: values.name,
-            wifiname: values.wifiname || '',
-            wifipass: values.wifipass || '',
-            address: values.address || '',
-            logoUrl: values.logoUrl || null,
-            bannerUrls: bannerUrls,
-            currency: values.currency || '',
-          },
-          menu: {
-            categories: [],
-            items: [],
-          },
-          uid: user.uid,
-        };
-  
-        const docRef = await addDoc(collection(db, 'users', user.uid, 'establishments'), establishment);
-        
-        const globalEstablishmentId = docRef.id;
-  
-        const globalEstablishmentsRef = doc(db, 'paths', 'establishments');
-        const globalSnap = await getDoc(globalEstablishmentsRef);
-  
-        if (globalSnap.exists()) {
-          const existingIds: string[] = globalSnap.data().ids || [];
-          existingIds.push(globalEstablishmentId);  
-          
-          await updateDoc(globalEstablishmentsRef, { ids: existingIds });
-        } else {
-          await setDoc(globalEstablishmentsRef, { ids: [globalEstablishmentId] });
-        }
-  
-        notification.success({ message: 'Establishment Added' });
-        form.resetFields();
-        setBannerFiles([]);
-        handleModalClose();
-        redirect(`/profile/establishments/${docRef.id}`);
-      }
-    } catch (error) {
-      console.error('Error adding establishment:', error);
-    }
-  };
-  const handleCopyLink = () => {
-    const linkToCopy = `https://menu.menubyqr.com/${user?.uid}/${selectedEstablishmentId}`;
-    navigator.clipboard.writeText(linkToCopy)
-      .then(() => {
-        notification.success({ message: 'Link copied to clipboard!' });
-      })
-      .catch((error) => {
-        console.error('Failed to copy the link: ', error);
-        notification.error({ message: 'Failed to copy the link', description: error.message });
-      });
-  };
+
   const handleDeleteEstablishment = async (id: string) => {
     setIsQrLinkModalVisible(false);
     setIsStylesModalVisible(false);
@@ -172,102 +80,59 @@ const Establishments: React.FC = () => {
       await deleteDoc(docRef);
     }
   };
-  const handleModalOpen = () => {
-    form.resetFields();
-    setIsModalVisible(true);
-  };
-  const handleModalClose = () => {
-    setIsModalVisible(false);
-  };
-  const handleLangugesModalClose = () => {
-    setIsLanguagesModalVisible(false)
-  }
-  const handleStylesModalClose = () => {
-    setIsStylesModalVisible(false);
-  };
-  const handleQrLinkModalOpen = (id: string) => {
-    setIsStylesModalVisible(false);
-    setIsQrLinkModalVisible(true);
-    setSelectedEstablishmentId(id);
-  };
-  const handleQrLinkModalClose = () => {
-    setIsQrLinkModalVisible(false);
-  };
-  const handleColorChange = (color: string, colorKey: keyof IEstablishment['styles']) => {
-    setSelectedColors((prevColors) => ({ ...prevColors, [colorKey]: color }));
-  };
-  const handleSaveStyles = async () => {
-    const user = auth.currentUser;
 
-    if (user && selectedEstablishmentId) {
-
-      const docRef = doc(db, 'users', user.uid, 'establishments', selectedEstablishmentId);
-      await updateDoc(docRef, { styles: selectedColors });
-      notification.success({ message: 'Styles Updated' });
-      handleStylesModalClose();
-    }
-  };
-  const handleStylesModalOpen = (id: string) => {
-    setIsQrLinkModalVisible(false);
-    setIsStylesModalVisible(true);
-    setSelectedEstablishmentId(id);
-  
-    const selectedEstablishment = establishments.find((est) => est.id === id);
-  
-    if (selectedEstablishment) {
-      const { color1, color2, color3, color4, color5 } = selectedEstablishment.styles;
-      setSelectedColors({
-        color1: color1 || '#ffffff',
-        color2: color2 || '#ffffff',
-        color3: color3 || '#ffffff',
-        color4: color4 || '#ffffff',
-        color5: color5 || '#ffffff',
-      });
-    }
-  };
   const handleToggleShowImg = async (establishmentId: any, isVisible: boolean) => {
     if (userId && establishmentId) {
         const showImgRef = doc(db, 'users', userId, 'establishments', establishmentId);
         await updateDoc(showImgRef, {
           [`styles.showImg`]: isVisible,
         });} 
-    };
+  };
+
+  const handleModalOpen = () => {
+    handleModalClose()
+    form.resetFields();
+    setIsModalVisible(true);
+  };
+
+  const handleQrLinkModalOpen = (id: string) => {
+    handleModalClose()
+    setIsQrLinkModalVisible(true);
+    setSelectedEstablishmentId(id);
+  };
+
+  const handleStylesModalOpen = (id: string) => {
+    handleModalClose();
+    setIsStylesModalVisible(true);
+    setSelectedEstablishmentId(id);
+    const selectedEstablishment = establishments.find((est) => est.id === id);
+    if (selectedEstablishment) {
+      const { color1, color2, color3, color4, color5 , showImg} = selectedEstablishment.styles;
+      setSelectedColors({
+        color1: color1 || '#ffffff',
+        color2: color2 || '#ffffff',
+        color3: color3 || '#ffffff',
+        color4: color4 || '#ffffff',
+        color5: color5 || '#ffffff',
+        showImg: showImg || false
+      });
+    }
+  };
+
  const handleLanguagesModalOpen = (id: string , language: ILanguages) => {
-    setIsQrLinkModalVisible(false);
-    setIsStylesModalVisible(false);
+    handleModalClose()
     setSelectedLanguages(language)
     setIsLanguagesModalVisible(true);
     setSelectedEstablishmentId(id);
   }
-  const handleUpdateLanguages = async (establishmentId: any, language: ILanguage) => {
-    const checkedLanguages = Object.values(selectedLanguages).filter(Boolean).length;
-    if (checkedLanguages === 1 && selectedLanguages[language]) {
-      return;
-    }
-  
-    setSelectedLanguages((prevState) => {
-      const updatedLanguages = {
-        ...prevState,
-        [language]: !prevState[language],
-      };
-  
-      if (userId && establishmentId) {
-        const showImgRef = doc(db, 'users', userId, 'establishments', establishmentId);
-        updateDoc(showImgRef, {
-          languages: updatedLanguages,
-        })
-          .then(() => {
-          })
-          .catch((error) => {
-            console.error("Error updating languages in Firestore:", error);
-          });
-      }
-  
-      return updatedLanguages;
-    });
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    setIsLanguagesModalVisible(false)
+    setIsStylesModalVisible(false);
+    setIsQrLinkModalVisible(false);
   };
-  
-  
+
    return (<>
 
     <div className={styles.main}>
@@ -324,92 +189,11 @@ const Establishments: React.FC = () => {
           </div>
         </Button>
       </div>
-      <Modal title="Languages Establishment" open={isLanguagesModalVisible} onCancel={handleLangugesModalClose} footer={null}>
-        <Checkbox
-          checked={selectedLanguages.am}
-          onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'am') }
-        >
-          Armenian (AM)
-        </Checkbox>
-        <Checkbox
-          checked={selectedLanguages.en}
-          onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'en')}
-        >
-          English (EN)
-        </Checkbox>
-        <Checkbox
-          checked={selectedLanguages.ru}
-          onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'ru')}
-        >
-          Russian (RU)
-        </Checkbox>
-        <Button style={{ marginTop: '10px', width: '100%' }} onClick={handleLangugesModalClose}>
-          Cancel
-        </Button>
-      </Modal>
-      <Modal title="Add Establishment" open={isModalVisible} onCancel={handleModalClose} footer={null}>
-        <Form form={form} layout="vertical" onFinish={handleAddEstablishment}>
-          <Form.Item
-            label="Establishment Name"
-            name="name"
-            rules={[{ required: true, message: 'Please input the name of the establishment!' }]}
-          >
-            <Input placeholder="Enter establishment name" />
-          </Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-            Add Establishment
-          </Button>
-          <Button style={{ marginTop: '10px', width: '100%' }} onClick={handleModalClose}>
-            Cancel
-          </Button>
-        </Form>
-      </Modal>
 
-      <Modal title="Edit Styles" open={isStylesModalVisible} onCancel={handleStylesModalClose} footer={null}>
-        <Form layout="vertical" onFinish={handleSaveStyles}>
-          <Form.Item label="Background color for your menu.">
-            <ColorPicker value={selectedColors.color1} onChange={(color) => handleColorChange(color.toHex(), 'color1')} />
-          </Form.Item>
-          <Form.Item label="Text color">
-            <ColorPicker value={selectedColors.color2} onChange={(color) => handleColorChange(color.toHex(), 'color2')} />
-          </Form.Item>
-          <Form.Item label="Text color when active">
-            <ColorPicker value={selectedColors.color3} onChange={(color) => handleColorChange(color.toHex(), 'color3')} />
-          </Form.Item>
-          <Form.Item label="If you haven't image for your items it's background color for it">
-            <ColorPicker value={selectedColors.color4} onChange={(color) => handleColorChange(color.toHex(), 'color4')} />
-          </Form.Item>
-          <Form.Item label="Color 5">
-            <ColorPicker value={selectedColors.color5} onChange={(color) => handleColorChange(color.toHex(), 'color5')} />
-          </Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-            Save Styles
-          </Button>
-        </Form>
-      </Modal>
-
-   <Modal title="QR or Link" open={isQrLinkModalVisible} onCancel={handleQrLinkModalClose} footer={null}>
-  {selectedEstablishmentId && (
-    <div className={styles.qrlink}>
-      <div className={styles.qr}>
-        <QRCode
-          className={styles.qrcode}
-          errorLevel="H"
-          value={`https://menu.menubyqr.com/${user?.uid}/${selectedEstablishmentId}`}/>
-      </div>
-      <div className={styles.link}>
-        <p>QR Link:</p>
-        <a className={styles.linklink} href={`https://menu.menubyqr.com/${user?.uid}/${selectedEstablishmentId}`}>
-          {`https://menu.menubyqr.com/${user?.uid}/${selectedEstablishmentId}`}
-        </a>
-        <Button type="primary" className={styles.qrlinkbutton} onClick={handleCopyLink}>
-          copy menu link
-        </Button>
-      </div>
-    </div>
-  )}
-</Modal>
-
+      <AddEstablishment isModalVisible={isModalVisible} onCancel={handleModalClose} form={form}/>
+      <LanguagesEstablishment isModalVisible={isLanguagesModalVisible} onCancel={handleModalClose} selectedLanguages={selectedLanguages} selectedEstablishmentId={selectedEstablishmentId} userId={userId} />
+      <EditStyles isModalVisible={isStylesModalVisible} onCancel={handleModalClose} selectedColors={selectedColors} selectedEstablishmentId={selectedEstablishmentId} userId={userId} />
+      <QrOrLink isModalVisible={isQrLinkModalVisible} onCancel={handleModalClose} selectedEstablishmentId={selectedEstablishmentId} userId={userId}/>
     </div>
     </>
   );

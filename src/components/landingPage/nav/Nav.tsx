@@ -102,7 +102,7 @@ const Nav: React.FC = () => {
               <Dropdown
                 menu={{
                   items: menuItems,
-                  onClick: handleMenuClick, // Bind the onClick handler here
+                  onClick: handleMenuClick,
                 }}
                 trigger={['click']}
               >
@@ -113,7 +113,7 @@ const Nav: React.FC = () => {
               <Dropdown
                 menu={{
                   items: menuItems,
-                  onClick: handleMenuClick, // Bind the onClick handler here as well
+                  onClick: handleMenuClick,
                 }}
                 trigger={['click']}
               >
