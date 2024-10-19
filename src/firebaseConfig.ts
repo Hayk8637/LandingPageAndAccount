@@ -13,6 +13,8 @@ const firebaseConfig = {
   // messagingSenderId: "120912014433",
   // appId: "1:120912014433:web:555d46cf64d55e69f98e20",
   // measurementId: "G-7G05KEZ74C"
+
+
   apiKey: "AIzaSyBhRzs2NmBj5qzefXhyLviIJl4LJvsDqnc",
   authDomain: "menus-74417.firebaseapp.com",
   databaseURL: "https://menus-74417-default-rtdb.firebaseio.com",

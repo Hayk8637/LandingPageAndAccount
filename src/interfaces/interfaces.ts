@@ -35,6 +35,7 @@ export interface IMenuCategoryItem {
 export interface IMenuCategoryItems {
   id: string;
   name: ITranslation;
+  description: ITranslation
   img: string | null;
   price: number;
   isVisible: boolean;

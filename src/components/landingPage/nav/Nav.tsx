@@ -9,7 +9,7 @@ import { onAuthStateChanged, User, signOut } from 'firebase/auth';
 import { auth } from '../../../firebaseConfig';
 import { UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import logo from  '../../../assets/logo/logo.png'
+import logo from  './logo.png'
 
 const Nav: React.FC = () => {
   const { t, i18n } = useTranslation("global");

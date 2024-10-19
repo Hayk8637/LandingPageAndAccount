@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import style from './style.module.css';
 import { InstagramOutlined, TikTokOutlined } from '@ant-design/icons';
-import logoSrc from '../../../assets/logo/logo.png'
+import logoSrc from './logo.png'
 
 const Footer: React.FC = () => {
   const { i18n } = useTranslation("global");

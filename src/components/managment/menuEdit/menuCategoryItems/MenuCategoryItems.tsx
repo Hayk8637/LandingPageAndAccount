@@ -1,33 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Upload, Button, message, Popover, Switch } from 'antd';
-import { DeleteOutlined, EditOutlined, OrderedListOutlined, UploadOutlined } from '@ant-design/icons';
+import { Modal, Button, message, Popover, Switch } from 'antd';
+import { EditOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { doc, updateDoc, getDoc, deleteField } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../../../firebaseConfig';
+import { db } from '../../../../firebaseConfig';
 import styles from './style.module.css';
 import defimg from '../../../../assets/img/pngwi.png'
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { IEstablishmentStyles, ILanguage, IMenuCategoryItems, ITranslation } from '../../../../interfaces/interfaces';
-
+import Create from './modals/create/create';
+import Edit from './modals/edit/edit';
 
 
 const MenuCategoryItems: React.FC = () => {
   const [menuItems, setMenuItems] = useState<IMenuCategoryItems[]>([]);
   const [, setError] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [editModalVisible, setEditModalVisible] = useState(false);
-  const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & { name: ITranslation , img?: string | null }>({ 
+  const [modalDescriptionVisibale , setModalDescriptionVisibale] = useState(false);
+  const [, setEditModalVisible] = useState(false);
+  const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & { name: ITranslation, description: ITranslation  , img?: string | null }>({ 
     name: { en: '', am: '', ru: '' },
+    description: { en: '', am: '', ru: '' },
     img: null,
     order: 0,
   }); 
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
+
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
   const [orderModalVisible, setOrderModalVisible] = useState(false);
   const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
-  const [currency, setCurrency] = useState<string>('$');
+  const [currency, setCurrency] = useState<string>('');
   const pathname = useLocation().pathname || '';
   const establishmentId = pathname.split('/')[pathname.split('/').length - 2];
   const categoryId = pathname.split('/')[pathname.split('/').length - 1];
@@ -42,6 +43,7 @@ const MenuCategoryItems: React.FC = () => {
       localStorage.setItem('language', 'en');
     }
   }, [currentLanguage]);
+  useEffect(()=>{},[newItem])
   useEffect(() => {
     const auth = getAuth();
     
@@ -61,27 +63,27 @@ const MenuCategoryItems: React.FC = () => {
         try {
           const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
           const docSnap = await getDoc(docRef);
-    
+          
           if (docSnap.exists()) {
             const data = docSnap.data();
             const menuItems = data.menu?.items || {};
             const categoryItems = menuItems[categoryId] || {};
-    
+            setCurrency(data.info.currency)
             const items: IMenuCategoryItems[] = Object.entries(categoryItems).map(
               ([id, menuItem]: any) => ({
                 id,
                 name: menuItem.name,
+                description: menuItem.description,
                 img: menuItem.img,
                 order: menuItem.order,
                 price: menuItem.price,
                 isVisible: menuItem.isVisible ?? true,
               })
             );
-    
             items.sort((a, b) => a.order - b.order);
+            setMenuItems(items);
             setEstablishmentStyles(data.styles)
             setCurrency(data.information.currency);
-            setMenuItems(items);
           } else {
             setError('No menu items found for this category');
           }
@@ -92,104 +94,8 @@ const MenuCategoryItems: React.FC = () => {
       }
     };
     
-      
     fetchMenuItems();
   }, [userId, establishmentId, categoryId , newItem]);
-
-  const handleNewItemSubmit = async () => {
-
-    if (!userId || !establishmentId) {
-      message.error('Missing user or establishment information');
-      return;
-    }
-    setUploading(true);
-
-    try {
-      let imageUrl = null;
-      if (imageFile) {
-        const imgId = Date.now().toString();
-        const storageRef = ref(storage, `establishments/${establishmentId}/items/${imgId}`);
-        const uploadTask = uploadBytesResumable(storageRef, imageFile);
-        await uploadTask;
-        imageUrl = await getDownloadURL(storageRef); 
-      }
-      if(imageUrl === ""){
-        imageUrl = defimg
-      }
-      const uniqueId = Date.now().toString();
-      const docRef = doc(db, 'users' , userId , 'establishments', establishmentId);
-      await updateDoc(docRef, {
-        [`menu.items.${categoryId}.${uniqueId}`]: {
-        name: {
-          en: newItem.name[currentLanguage],
-          am: newItem.name[currentLanguage],
-          ru: newItem.name[currentLanguage]
-        },
-        price: newItem.price,
-        img: imageUrl,
-        order: menuItems.length,
-        isVisible: true}
-      });
-      message.success('New item added successfully');
-      setModalVisible(false);
-      setNewItem({
-        name: { en: '', am: '', ru: '' },
-        img: null,
-        order: 0,
-      });      setImageFile(null);
-    } catch (error) {
-      message.error('Failed to add new item');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleEditItemSubmit = async () => {
-    if (!currentEditingId ||!newItem.name || !newItem.name?.en || !newItem.name?.ru || !newItem.name?.am || !newItem.price || !userId || !establishmentId) {
-      message.error('Please fill all fields');
-      return;
-    }
-    
-    setUploading(true);
-
-    try {
-      let imageUrl = '';
-      if (imageFile) {
-        const imgId = Date.now().toString();
-        const storageRef = ref(storage, `establishments/${establishmentId}/items/${imgId}`);
-        const uploadTask = uploadBytesResumable(storageRef, imageFile);
-        await uploadTask;
-        imageUrl = await getDownloadURL(storageRef);
-        if(imageUrl === ""){
-          imageUrl = defimg
-        }
-      }
-      const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
-      const updatedName = {
-        ...newItem.name,
-        [currentLanguage]: newItem.name[currentLanguage],
-      };
-      await updateDoc(docRef, {
-        [`menu.items.${categoryId}.${currentEditingId}`]: {
-        name: updatedName,
-        price: newItem.price,
-        img: imageUrl,
-        isVisible: true}
-      });      
-      message.success('Item updated successfully');
-      setEditModalVisible(false);
-      setCurrentEditingId(null);
-      setNewItem({
-        name: { en: '', am: '', ru: '' },
-        img: null,
-        order: 0,
-      });      setImageFile(null);
-    } catch (error) {
-      message.error('Failed to update item');
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const handleToggleVisibility = async (id: string, isVisible: boolean) => {
     try {
@@ -232,6 +138,7 @@ const MenuCategoryItems: React.FC = () => {
           setCurrentEditingId(item.id); 
           setNewItem({
             name: item.name,
+            description: item.description,
             price: item.price,
             img: item.img
           });
@@ -299,9 +206,14 @@ const MenuCategoryItems: React.FC = () => {
   const showOrderModal = () => {
     setOrderModalVisible(true);
   };
-  const handleRemoveImage = () => {
-    setNewItem({ ...newItem, img: '' }); 
-  };
+
+  const handleCancel = () => {
+    setModalVisible(false)
+    setEditModalVisible(false)
+    setOrderModalVisible(false)
+    setModalDescriptionVisibale(false)
+    setCurrentEditingId(null);
+  }
   
   return (
     <div className={styles.menuCategoryItems} style={{backgroundColor: `#${establishmentStyles?.color1}` }}>
@@ -311,9 +223,19 @@ const MenuCategoryItems: React.FC = () => {
       <div className={styles.menuCategoryItemsList}>
         {menuItems.length > 0 ? (
             menuItems.map((item) => (
-              <div key={item.id} className={styles.menuCategoryItem} style={{border: `1px solid #${establishmentStyles?.color2}`}}>
+              <div key={item.id} className={styles.menuCategoryItem} onClick={(e) => { 
+                e.stopPropagation(); 
+                setNewItem({
+                  name: item.name,
+                  description: item.description,
+                  price: item.price,
+                  img: item.img
+                });
+                setModalDescriptionVisibale(true); 
+              }} style={{border: `1px solid #${establishmentStyles?.color2}`}}>
                 <div className={styles.menuCategoryItemCart}>
-                  <div className={styles.up}   style={{ height: establishmentStyles?.showImg ? '229px' : '40px' }}>
+                  <div className={styles.up}   
+                    style={{ height: establishmentStyles?.showImg ? '229px' : '40px' }}>
                     {establishmentStyles?.showImg ? (
                     <div className={styles.itemImg}>
                       <img
@@ -348,154 +270,47 @@ const MenuCategoryItems: React.FC = () => {
       <Button type="primary" className={styles.addItem}  onClick={() => setModalVisible(true)}>
         Create New Item
       </Button>
+      
 
-      <Modal
-  title="Create New Item"
-  open={modalVisible}
-  onCancel={() => setModalVisible(false)}
-  footer={null}
->
-  <Form layout="vertical">
-    <Form.Item label="Item Name" required>
-      <Input
-        placeholder="Item Name"
-        value={newItem.name?.[currentLanguage] || ''}
-        onChange={(e) =>
-          setNewItem({
-            ...newItem,
-            name: {
-              ...newItem.name,
-              [currentLanguage]: e.target.value || '',
-            } as ITranslation, 
-          })
-        }
-      />
-    </Form.Item>
-    <Form.Item label="Price" required>
-      <Input
-        type="number"
-        placeholder="Price"
-        value={newItem.price || ''}
-        onChange={(e) => setNewItem({ ...newItem, price: parseFloat(e.target.value) })}
-      />
-    </Form.Item>
-    <Form.Item label="Image Upload">
-      <Upload
-        beforeUpload={(file) => {
-          setImageFile(file);
-          return false; 
-        }}
-        maxCount={1}
-        listType="picture"
-      >
-        <Button icon={<UploadOutlined />}>Upload</Button>
-      </Upload>
-    </Form.Item>
-    <Form.Item>
-      <Button type="primary" loading={uploading} onClick={handleNewItemSubmit}>
-        Create
-      </Button>
-    </Form.Item>
-  </Form>
-</Modal>
-<Modal
-  title="Edit Item"
-  open={editModalVisible}
-  onCancel={() => setEditModalVisible(false)}
-  footer={null}
->
-  <Form layout="vertical">
-    <Form.Item label="Item Name" required>
-      <Input
-        placeholder="Item Name"
-        value={newItem.name?.[currentLanguage] || ''}
-        onChange={(e) => setNewItem({
-          ...newItem,
-          name: {
-            ...newItem.name,
-            [currentLanguage]: e.target.value || '',
-          } as ITranslation, 
-        })}
-      />
-    </Form.Item>
-    <Form.Item label="Price" required>
-      <Input
-        type="number"
-        placeholder="Price"
-        value={newItem.price}
-        onChange={(e) => setNewItem({ ...newItem, price: parseFloat(e.target.value) })}
-      />
-    </Form.Item>
-    <Form.Item label="Image Upload">
-      <Upload
-        beforeUpload={(file) => {
-          setImageFile(file);
-          return false; 
-        }}
-        maxCount={1}
-        listType='picture'
-      >
-        <Button icon={<UploadOutlined />}>Upload</Button>
-      </Upload>
-      {newItem.img && (
-        <div style={{ marginTop: 10 }}>
-          <img
-            src={newItem.img}
-            alt="Uploaded"
-            width={100}
-            height={100}
-            style={{ objectFit: 'cover', marginTop: 10 }}
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            type="link"
-            onClick={handleRemoveImage}
-            style={{ marginLeft: 10 }}
-          >
-            Remove
-          </Button>
-        </div>
-      )}
-    </Form.Item>
-    <Form.Item>
-      <Button type="primary" loading={uploading} onClick={handleEditItemSubmit}>
-        Update
-      </Button>
-    </Form.Item>
-  </Form>
-</Modal>
-
+      <Modal title="Description" open={modalDescriptionVisibale} onCancel={() => {setModalDescriptionVisibale(false)}} footer={null}>
+          <h1>{newItem.name[currentLanguage]}</h1>
+           {newItem.img && establishmentStyles?.showImg ? <img width={'100px'} height={'100px'} src={newItem.img} alt="img" /> : null }
+          <span style={{display: 'block'}}>{newItem.description[currentLanguage]}</span>
+      </Modal>
+      
+      <Create isModalVisible={modalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItemsLength={menuItems.length} categoryId={categoryId} />
+      <Edit isModalVisible={modalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} categoryId={categoryId} currentItem={newItem} currentItemId={currentEditingId} />
      <Modal
-  title="Change Menu Item Order"
-  open={orderModalVisible}
-  onCancel={() => setOrderModalVisible(false)}
-  footer={null}
->
-  <div>
-    {menuItems.map(item => (
-      <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span>{item.name[currentLanguage]}</span>
+        title="Change Menu Item Order"
+        open={orderModalVisible}
+        onCancel={() => setOrderModalVisible(false)}
+        footer={null}
+      >
         <div>
-          <Button 
-            disabled={menuItems[0].id === item.id} 
-            onClick={() => handleMoveUp(item.id)}
-          >
-            Up
-          </Button>
-          <Button 
-            disabled={menuItems[menuItems.length - 1].id === item.id} 
-            onClick={() => handleMoveDown(item.id)}
-          >
-            Down
+          {menuItems.map(item => (
+            <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>{item.name[currentLanguage]}</span>
+              <div>
+                <Button 
+                  disabled={menuItems[0].id === item.id} 
+                  onClick={() => handleMoveUp(item.id)}
+                >
+                  Up
+                </Button>
+                <Button 
+                  disabled={menuItems[menuItems.length - 1].id === item.id} 
+                  onClick={() => handleMoveDown(item.id)}
+                >
+                  Down
+                </Button>
+              </div>
+            </div>
+          ))}
+          <Button type="primary" onClick={handleSaveOrder}>
+            Save Order
           </Button>
         </div>
-      </div>
-    ))}
-    <Button type="primary" onClick={handleSaveOrder}>
-      Save Order
-    </Button>
-  </div>
-</Modal>
+      </Modal>
 
     </div>
   );

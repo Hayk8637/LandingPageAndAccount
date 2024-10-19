@@ -23,7 +23,12 @@
 .header > .leftRight > .left > a {
     text-decoration: none;
     font-size: 24px;
+
     width: 32px;
+}
+.header > .leftRight > .center {
+    width: 100px;
+    height: 50px;
 }
 .header > .leftRight > .center > .logoWrapper {
     position: relative;
@@ -37,12 +42,12 @@
 
 .header > .leftRight > .right {
     display: flex;
-    align-items: center; /* Vertically center the icons */
-    gap: 15px; /* Space between the icons */
-    position: relative; /* Position relative to allow absolute positioning of edit button */
+    align-items: center; 
+    gap: 15px;
+    position: relative;
     font-size: 24px;
     width: 'auto';
-     height: '50px';
+    height: '50px';
 }
 
 .header > .leftRight > .right > .info {
@@ -52,14 +57,17 @@
 
 .header > .leftRight > .right > .edit {
     position: absolute;
-    right: 0;
-    bottom: -45px; /* Positioned at the bottom right */
-    font-size: 20px;
-    color: #ff7700;
+    right: 5px;
+    bottom: -45px;
+    font-size: 24px;
+    background-color: #ff7700;
+    color: white;
+    padding: 3px;
 }
 
 .edit:hover, .edit:active, .edit:focus {
-    color: #e65c00 !important; /* Force the color change on hover, active, and focus */
+    background-color: white !important;
+    color: #ff7700 !important;
 }
 
 .header > .search {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './style.module.css';
 import { CopyOutlined, EnvironmentOutlined, InfoCircleOutlined, LeftOutlined, LockOutlined, PhoneOutlined, WifiOutlined } from '@ant-design/icons';
-import { Button, Form, notification, Popover } from 'antd';
+import { Button, notification, Popover } from 'antd';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -10,7 +10,6 @@ import { IEstablishment, IEstablishmentStyles, IInfoValues, ILanguages } from '.
 const HeaderMenu: React.FC = () => {
     var currentPath = useLocation().pathname || '';
     const returnBack = currentPath.split('/').slice(0, currentPath.split('/').length-1).join('/');
-    const [form] = Form.useForm();
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const pathname = useLocation().pathname || '';
     const pathArray = pathname.split('/');
@@ -83,7 +82,7 @@ const HeaderMenu: React.FC = () => {
                 
 
         fetchEstablishmentData();
-    }, [establishmentId, form , userId , establishmentStyles]);
+    }, [establishmentId, userId ]);
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text).then(() => {
@@ -151,12 +150,12 @@ const HeaderMenu: React.FC = () => {
                     color: establishmentStyles?.color2
                   }}
                 >
-                  {language}
+                  {language.toUpperCase()}
                 </option>
               ))}
           </select>
         ) : null}
-                <Popover placement="bottomRight" style={{padding:'15px'}} title="Establishment Info" content={popoverContent} arrow>
+                <Popover placement="bottomRight" style={{padding:'15px'}} content={popoverContent} arrow>
                   <Button type="link" className={styles.info}
                       style={{ color: textColor }}
                       onMouseEnter={() => setTextColor(`#${establishmentStyles?.color3}`)}

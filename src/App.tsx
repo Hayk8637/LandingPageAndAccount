@@ -10,7 +10,7 @@ import i18n from './translations/i18n';
 
 function App() {
   return (
-    <I18nextProvider i18n={i18n}> {/* Provide i18n instance */}
+    <I18nextProvider i18n={i18n}>
       <Router>
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
@@ -19,6 +19,9 @@ function App() {
             <Route path="/profile/establishments/" element={<Establishments />} />
             <Route path="/profile/establishments/:establishmentId/" element={<HomeMenu />} />
             <Route path="/profile/establishments/:establishmentId/:categoryId" element={<Menu />} />
+            <Route path='/:userId/:establishmentId' element={<HomeMenu/>} />
+            <Route path='/:userId/:establishmentId/:categoryId' element={<Menu/>} />
+            <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>
       </Router>

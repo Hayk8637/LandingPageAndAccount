@@ -25,7 +25,6 @@ const MenuCategoryNavigation: React.FC = () => {
   }, [currentLanguage]);
   useEffect(() => {
     const auth = getAuth();
-    
     const unsubscribeAuth = onAuthStateChanged(auth, (user:any) => {
       if (user) {
         setUserId(user.uid);
@@ -33,7 +32,6 @@ const MenuCategoryNavigation: React.FC = () => {
         setUserId(null); 
       }
     });
-
     return () => unsubscribeAuth();
   }, []);
   useEffect(() => {
@@ -66,10 +64,8 @@ const MenuCategoryNavigation: React.FC = () => {
           }
         }
       };
-
     fetchCategories();
   }, [userId, establishmentId]);
-
 
   return (
     <div className={styles.menuCategoryNavigation} style={{backgroundColor: `#${establishmentStyles?.color1}`}}>
@@ -80,8 +76,7 @@ const MenuCategoryNavigation: React.FC = () => {
           className={currentCategoryName === category.id ? styles.activeTab : styles.a} 
           style={{ color: currentCategoryName === category.id ? `#${establishmentStyles?.color1}` : `#${establishmentStyles?.color2}`,
                    backgroundColor: currentCategoryName === category.id ? `#${establishmentStyles?.color2}` : ``,
-                   borderColor: currentCategoryName === category.id ? `` : `#${establishmentStyles?.color2}`,
-                }}>
+                   borderColor: currentCategoryName === category.id ? `` : `#${establishmentStyles?.color2}`}}>
           {category.name[currentLanguage]}
         </a>
       ))}

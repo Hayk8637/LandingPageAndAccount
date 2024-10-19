@@ -10,9 +10,8 @@ import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { IBannerImage, IEstablishmentStyles } from '../../../../interfaces/interfaces';
 
-
 const contentStyle: React.CSSProperties = {
-  height: '200px',
+  height: '200px',  
   width: '100%',
   position: 'relative',
   overflow: 'hidden',
@@ -35,6 +34,7 @@ const Banner: React.FC = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
   useEffect(() => {
     const auth = getAuth();
     
@@ -49,6 +49,7 @@ const Banner: React.FC = () => {
 
     return () => unsubscribeAuth();
   }, []);
+
   useEffect(() => {
     const fetchBanners = async () => {
       if (userId && establishmentId) {
@@ -107,56 +108,63 @@ const Banner: React.FC = () => {
             });
             const newBannerImage: IBannerImage = { id: uniqueId, url: downloadURL };
             setBannerImages((prev) => [...prev, newBannerImage]);
-            notification.success({ message: 'Success', description: 'Banner uploaded successfully.' });
+            notification.success({ message: 'Success' });
           }
         } catch (error) {
           notification.error({
             message: 'Update Failed',
-            description: `Failed to update banner URL in Firestore: ${error}`,
+            description: ``,
           });
         } finally {
           setUploading(false);
-          handleCancel();
         }
       }
     );
 
     return false;
   };
-  const handleDelete = async (id: string) => {
-    if (userId && establishmentId) {
-      try {
-        const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
-        const docSnap = await getDoc(docRef);
-  
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          const updatedBannerUrls = { ...data.info.bannerUrls };
-          delete updatedBannerUrls[id]; // Remove the banner using its ID
-  
-          await updateDoc(docRef, {
-            'info.bannerUrls': updatedBannerUrls, // Update the entire object
-          });
-  
-          setBannerImages((prev) => prev.filter((image) => image.id !== id));
-          notification.success({ message: 'Success', description: 'Banner deleted successfully.' });
-        } else {
-          notification.error({ message: 'Error', description: 'Document does not exist.' });
+  const handleDelete = (id: string) => {
+    Modal.confirm({
+      title: 'Confirm Deletion',
+      content: 'Are you sure you want to delete this banner image?',
+      onOk: async () => {
+        if (userId && establishmentId) {
+          try {
+            const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
+            const docSnap = await getDoc(docRef);
+    
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              const updatedBannerUrls = { ...data.info.bannerUrls };
+              delete updatedBannerUrls[id]; // Remove the banner using its ID
+    
+              await updateDoc(docRef, {
+                'info.bannerUrls': updatedBannerUrls, // Update the entire object
+              });
+    
+              setBannerImages((prev) => prev.filter((image) => image.id !== id));
+              notification.success({ message: 'Success' });
+            } else {
+              notification.error({ message: 'Error' });
+            }
+          } catch (error) {
+            notification.error({
+              message: 'Delete Failed',
+            });
+          }
         }
-      } catch (error) {
-        notification.error({
-          message: 'Delete Failed',
-          description: `Failed to delete banner image: ${error}`,
-        });
-      }
-    }
+      },
+      onCancel() {
+        console.log('Delete canceled');
+      },
+    });
   };
   
   return (
     <div className={styles.banner} style={{backgroundColor: `#${establishmentStyles?.color1}`}}>
       {bannerImages.length === 0 ? (
-        <div style={{ backgroundColor: '#ffbf87', height: '200px', width: '100%', borderRadius: '22px', margin: 'auto' }}>
-          <Button type="link" onClick={showModal} className={styles.editButton}>
+        <div style={{ backgroundColor: '#ffbf87', height: '200px', width: '95%' ,borderRadius: '22px', margin: 'auto' }}>
+          <Button type="primary" onClick={showModal} className={styles.editButton}>
             <EditOutlined />
           </Button>
         </div>
@@ -190,9 +198,7 @@ const Banner: React.FC = () => {
             <List.Item key={item.id} actions={[
               <Button type="link" key={item.id} icon={<DeleteOutlined />} onClick={() => handleDelete(item.id)} />
             ]}>
-              <List.Item.Meta
-                avatar={<img src={item.url} alt={`Banner ${item.id}`} width={200} height={100} />}
-              />
+              <List.Item.Meta avatar={<img src={item.url} alt={`Banner ${item.id}`} width={200} height={100} />} />
             </List.Item>
           )}
         />

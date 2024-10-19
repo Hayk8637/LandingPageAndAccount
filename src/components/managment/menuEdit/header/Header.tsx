@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { InfoCircleOutlined, EditOutlined, UploadOutlined, CopyOutlined, WifiOutlined, PhoneOutlined, LockOutlined, EnvironmentOutlined, LeftOutlined } from '@ant-design/icons';
-import { Button, Modal, Form, Input, Upload, notification, Popover } from 'antd';
+import { Button, Modal, Form, Input, Upload, notification, Popover, Select } from 'antd';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -30,6 +30,7 @@ const Header: React.FC = () => {
     currency: '',
   });
   const [currentLanguage, setCurrentLanguage] = useState<string>('en');
+  const { Option } = Select;
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language');
@@ -55,10 +56,8 @@ const Header: React.FC = () => {
     localStorage.setItem('language', language);
     window.location.reload(); 
 };
-
   useEffect(() => {
     const auth = getAuth();
-    
     const unsubscribeAuth = onAuthStateChanged(auth, (user:any) => {
       if (user) {
         setUserId(user.uid);
@@ -66,7 +65,6 @@ const Header: React.FC = () => {
         setUserId(null);  
       }
     });
-
     return () => unsubscribeAuth();
   }, []);
 
@@ -106,7 +104,7 @@ const Header: React.FC = () => {
       };
       fetchEstablishmentData();
     }
-  }, [establishmentId, form, userId]);
+  }, [establishmentId , userId]);
   
   const openModal = () => {
     form.setFieldsValue({
@@ -129,25 +127,35 @@ const Header: React.FC = () => {
       notification.error({ message: 'Error', description: 'Establishment ID is not set' });
       return;
     }
+  
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {
       notification.error({ message: 'Error', description: 'User is not authenticated' });
       return;
     }
+    
     const db = getFirestore();
     const docRef = doc(db, 'users', user.uid, 'establishments', establishmentId);
-    await updateDoc(docRef, {
-      'info.wifiname': values.wifiname,
-      'info.wifipass': values.wifipass,
-      'info.address': values.address,
-      'info.currency': values.currency,
-      'info.phone': values.phone,
-      'info.logoUrl': null,
-    });
+  
+    const currentDocSnap = await getDoc(docRef);
+    if (currentDocSnap.exists()) {  
+      await updateDoc(docRef, {
+        'info.wifiname': values.wifiname,
+        'info.wifipass': values.wifipass,
+        'info.address': values.address,
+        'info.currency': values.currency,
+        'info.phone': values.phone,
+      });
+    } else {
+      notification.error({ message: 'Error', description: 'Document does not exist' });
+    }
+  
     notification.success({ message: 'Success', description: 'Details updated successfully' });
     closeModal();
+
   };
+  
 
   const handleLogoUpload = (file: File) => {
     if (!file) {
@@ -172,7 +180,6 @@ const Header: React.FC = () => {
             const oldLogoRef = ref(storage, logoUrl);
             await deleteObject(oldLogoRef).catch((error) => {
               if (error.code !== 'storage/object-not-found') {
-                notification.error({ message: 'Deletion Failed', description: 'Failed to delete old logo.' });
               }
             });
           }
@@ -204,7 +211,6 @@ const Header: React.FC = () => {
       notification.error({ message: 'Failed to copy', description: 'Unable to copy text' });
     });
   };
-
   const popoverContent = (
     <div style={{ width: '100%' }}>
       {[
@@ -231,16 +237,10 @@ const Header: React.FC = () => {
             </a>
           </div>
           <div className={styles.center}>
-                {logoUrl && (
-                    <img
-                        src={logoUrl}
-                        alt="Logo"
-                        width={120} 
-                        height={50} 
-                        style={{ objectFit: 'contain' }} 
-                    />
-                )}
-            </div>
+              {logoUrl && (
+                <img src={logoUrl} alt="Logo" width={120} height={50} style={{ objectFit: 'contain' }}/>
+              )}
+          </div>
           <div className={styles.right}>
           {(languages?.am || languages?.en || languages?.ru) ? (
           <select
@@ -265,13 +265,13 @@ const Header: React.FC = () => {
                     color: establishmentStyles?.color2
                   }}
                 >
-                  {language}
+                  {language.toUpperCase()}
                 </option>
               ))}
           </select>
         ) : null}
 
-            <Popover placement="bottomRight" title="Establishment Info" content={popoverContent} arrow>
+            <Popover placement="bottomRight" content={popoverContent} arrow>
               <Button type="link" className={styles.info} 
                style={{ color: textColor }}
                   onMouseEnter={() => setTextColor(`#${establishmentStyles?.color3}`)}
@@ -284,7 +284,7 @@ const Header: React.FC = () => {
                 <InfoCircleOutlined style={{color: `#${establishmentStyles?.color2}`}}/>
               </Button>
             </Popover>
-            <Button type="link" className={styles.edit} onClick={openModal}>
+            <Button type="primary" className={styles.edit} onClick={openModal}>
               <EditOutlined />
             </Button>
           </div>
@@ -302,13 +302,23 @@ const Header: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item name="currency" label="Currency">
-            <Input />
+            <Select placeholder="Select currency">
+              <Option value="$">$</Option>
+              <Option value="₽">₽</Option>
+              <Option value="֏">֏</Option>
+            </Select>
           </Form.Item>
-          <Form.Item name="phone" label="Phone">
-            <Input />
+          <Form.Item name="phone"  label="Phone"
+          rules={[
+            {
+              pattern: /^[0-9\s+()]*$/,
+              message: 'Phone number can only contain numbers, spaces, +, (, and )!',
+            },
+          ]}>
+            <Input  type='tel'/>
           </Form.Item>
           <Form.Item label="Upload Logo">
-            <Upload accept="image/*" showUploadList={false} beforeUpload={handleLogoUpload}>
+            <Upload accept="image/*" showUploadList={false} beforeUpload={handleLogoUpload} listType='picture'>
               <Button icon={<UploadOutlined />} loading={uploading}>
                 {uploading ? 'Uploading' : 'Upload Logo'}
               </Button>

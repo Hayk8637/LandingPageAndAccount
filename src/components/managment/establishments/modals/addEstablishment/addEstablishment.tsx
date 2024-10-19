@@ -1,11 +1,10 @@
-import { Button, Form, Input, Modal, notification } from 'antd'
+import { Button, Form, Input, Modal } from 'antd'
 import React, { useState } from 'react'
 import { db, storage } from '../../../../../firebaseConfig';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { IEstablishment } from '../../../../../interfaces/interfaces';
 import { addDoc, collection } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
 
 interface IAddEstablishmentProps{
     isModalVisible: boolean;
@@ -15,7 +14,6 @@ interface IAddEstablishmentProps{
 
 const AddEstablishment:React.FC<IAddEstablishmentProps> = ({isModalVisible , onCancel , form }) => {
     const [bannerFiles, setBannerFiles] = useState<File[]>([]);
-    const navigate = useNavigate();
     const handleAddEstablishment = async (values: any) => {
         const userId = getAuth().currentUser?.uid;
         try {
@@ -57,12 +55,10 @@ const AddEstablishment:React.FC<IAddEstablishmentProps> = ({isModalVisible , onC
               },
               uid: userId,
             };
-            const docRef = await addDoc(collection(db, 'users', userId, 'establishments'), establishment);
-            notification.success({ message: 'Establishment Added' });
+            await addDoc(collection(db, 'users', userId, 'establishments'), establishment);
             form.resetFields();
             setBannerFiles([]);
             onCancel();
-            navigate(`/profile/establishments/${docRef.id}`);
           }
         } catch (error) {
           console.error('Error adding establishment:', error);

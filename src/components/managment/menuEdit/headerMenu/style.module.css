@@ -28,8 +28,6 @@
     font-size: 24px;
     width: 32px;
 }
-/* .headerMenu > .center {
-} */
 .headerMenu > .center > h1 {
     margin: auto;
     font-size: 24px;
@@ -37,9 +35,9 @@
 }
 .headerMenu > .right{
     text-align: right;
-    width: 160px;
     padding: 10px 0;
     padding-right: 10px;
+    display: flex;
     position: absolute;
     right: 0;
 }
@@ -49,12 +47,5 @@
 }
 .info {
     font-size: 24px;
-    /* color: #ff7700; */
 }
-.headerMenu >.right > .heart {
-    border-right: 2px solid #F2F2F2 ;
-    padding-right: 20px;
-}
-.headerMenu > .right > .cart {
-    padding-left: 20px;
-}
+

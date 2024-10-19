@@ -2,6 +2,8 @@
     width: 100%;
     max-width: 400px;
     padding-bottom: 10px;
+    min-height: calc(100vh - 346px);
+
 }
 
 .allMenu > h1 {
@@ -39,17 +41,21 @@
     position: absolute;
     right: 0;
     top: 0;
-    margin-right: 10px;
-    margin-top: 0;
-    color: #ff7700;
+    margin-right: 7px;
+    margin-top: 3px;
+    color: white;
+    background-color: #ff7700 !important;
     border: none;
     background:none;
     z-index: 5;
     font-size: 24px;
     cursor: pointer;
+    border-radius: 5px;
+    padding: 3px;
 }
 .allMenu > .menuCategories > .menuCategoryItem > .functions:hover  {
-    color:#e65c00 ;
+    color:#ff7700 !important;
+    background-color: white !important;
 }   
 .allMenu > .menuCategories > .menuCategoryItem::before {
     content: "";
@@ -77,9 +83,14 @@
     text-align: right;
 }
 .ordering > .orderButton {
-    color: #ff7700;
+    color: white;
+    background-color: #ff7700;
+    padding: 4px;
+    margin-right: 9px;
     font-size:  24px;
+    border-radius: 5px;
 }
  .orderButton:focus , .orderButton:active , .orderButton:hover {
     color: #e65c00 !important;
+    background-color: white !important;
 } 

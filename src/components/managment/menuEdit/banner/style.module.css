@@ -32,21 +32,26 @@
     margin: 13px;
     z-index: 1;
     color: white;
-    font-size: 22px;
+    font-size: 24px;
     transition: color 0.3s ease;
+    background-color: #ff7700;
+    padding: 3px;
 }
 
 .editButtonA {
     position: absolute; 
     top: 20px; 
-    right: 15px; 
+    right: 20px; 
     z-index: 1;
-    color: #ff7700;
-    font-size: 22px;
+    color: white;
+    font-size: 24px;
+    background-color: #ff7700;
     transition: color 0.3s ease;
+    padding: 3px;
 }
 
 
 .editButton:hover, .editButton:active, .editButton:focus, .editButtonA:hover, .editButtonA:active, .editButtonA:focus {
-    color: #e65c00 !important;
+    color: #ff7700 !important;
+    background-color: white !important;
 }

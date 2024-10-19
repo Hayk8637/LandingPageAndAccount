@@ -9,6 +9,7 @@ import AddEstablishment from './modals/addEstablishment/addEstablishment'
 import LanguagesEstablishment from './modals/languagesEstablishment/languagesEstablishment';
 import EditStyles from './modals/editStyles/editStyles';
 import QrOrLink from './modals/qrOrLink/qrOrLink';
+
 const Establishments: React.FC = () => {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -18,6 +19,7 @@ const Establishments: React.FC = () => {
   const [establishments, setEstablishments] = useState<IEstablishment[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedEstablishmentId, setSelectedEstablishmentId] = useState<string | null>(null);
+  const [visiblePopoverId, setVisiblePopoverId] = useState<string | null>(null);
   const [selectedColors, setSelectedColors] = useState<IEstablishmentStyles>({
     color1: '#ffffff',
     color2: '#ffffff',
@@ -31,7 +33,6 @@ const Establishments: React.FC = () => {
   const db = getFirestore();
   useEffect(() => {
     const auth = getAuth();
-    
     const unsubscribeAuth = onAuthStateChanged(auth, (user:any) => {
       if (user) {
         setUserId(user.uid);
@@ -45,7 +46,6 @@ const Establishments: React.FC = () => {
   }, []);
   useEffect(() => {
   }, [selectedColors]);
-
   useEffect(() => {
     const fetchEstablishments = async () => {
       if (userId) {
@@ -78,8 +78,7 @@ const Establishments: React.FC = () => {
     };
   
     fetchEstablishments();
-  }, [userId, db]);
-  
+  }, [userId, db]);  
 
   const handleDeleteEstablishment = async (id: string) => {
     setIsQrLinkModalVisible(false);
@@ -90,7 +89,6 @@ const Establishments: React.FC = () => {
       await deleteDoc(docRef);
     }
   };
-
   const handleToggleShowImg = async (establishmentId: any, isVisible: boolean) => {
     if (userId && establishmentId) {
         const showImgRef = doc(db, 'users', userId, 'establishments', establishmentId);
@@ -98,19 +96,16 @@ const Establishments: React.FC = () => {
           [`styles.showImg`]: isVisible,
         });} 
   };
-
   const handleModalOpen = () => {
     handleModalClose()
     form.resetFields();
     setIsModalVisible(true);
   };
-
   const handleQrLinkModalOpen = (id: string) => {
     handleModalClose()
     setIsQrLinkModalVisible(true);
     setSelectedEstablishmentId(id);
   };
-
   const handleStylesModalOpen = async (id: string) => {
     handleModalClose();
     const selectedEstablishment = establishments.find((est) => est.id === id);
@@ -125,25 +120,21 @@ const Establishments: React.FC = () => {
     setIsStylesModalVisible(true);
     setSelectedEstablishmentId(id);
 };
-
-  
-
  const handleLanguagesModalOpen = (id: string , language: ILanguages) => {
     handleModalClose()
     setSelectedLanguages(language)
     setIsLanguagesModalVisible(true);
     setSelectedEstablishmentId(id);
   }
-
-  const handleModalClose = () => {
+ const handleModalClose = () => {
     setIsModalVisible(false);
     setIsLanguagesModalVisible(false)
     setIsStylesModalVisible(false);
     setIsQrLinkModalVisible(false);
+    setVisiblePopoverId(null)
   };
 
    return (<>
-
     <div className={styles.main}>
       <div className={styles.items}>
         {establishments.map((establishment) => (
@@ -163,11 +154,16 @@ const Establishments: React.FC = () => {
             <Popover
               content={
                 <div>
-                  <Switch checkedChildren="With IMG" unCheckedChildren="Without IMG" checked={establishment.styles.showImg} onChange={(checked) => handleToggleShowImg(establishment.id, checked)} />
-                  <Button className={styles.editButtons} onClick={() => handleStylesModalOpen(establishment.id! )}>
+                  <Switch
+                    checkedChildren="With IMG"
+                    unCheckedChildren="Without IMG"
+                    checked={establishment.styles.showImg}
+                    onChange={(checked) => handleToggleShowImg(establishment.id, checked)}
+                  />
+                  <Button className={styles.editButtons} onClick={() => handleStylesModalOpen(establishment.id!)}>
                     Styles
                   </Button>
-                  <Button className={styles.editButtons} onClick={() => handleLanguagesModalOpen(establishment.id! , establishment.languages)} >
+                  <Button className={styles.editButtons} onClick={() => handleLanguagesModalOpen(establishment.id!, establishment.languages)}>
                     Languages
                   </Button>
                   <Button className={styles.editButtons} icon={<QrcodeOutlined />} onClick={() => handleQrLinkModalOpen(establishment.id!)}>
@@ -185,9 +181,15 @@ const Establishments: React.FC = () => {
                   </Popconfirm>
                 </div>
               }
-              trigger="click"
-            >
-              <Button type="link" icon={<EditOutlined />} className={styles.editButton} />
+              trigger="click" 
+              open={visiblePopoverId === establishment.id}
+              onOpenChange={(visible) => setVisiblePopoverId(visible ? establishment.id! : null)}>
+              <Button
+                type="link"
+                icon={<EditOutlined />}
+                className={styles.editButton}
+                onClick={() => setVisiblePopoverId(establishment.id!)}
+                onMouseEnter={() => setVisiblePopoverId(establishment.id!)}/>
             </Popover>
           </div>
         ))}
