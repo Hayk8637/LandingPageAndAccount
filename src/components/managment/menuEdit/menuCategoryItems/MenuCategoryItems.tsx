@@ -227,9 +227,9 @@ const MenuCategoryItems: React.FC = () => {
                     placement="topRight"
                     open={visiblePopoverId === item.id}
                     onOpenChange={(visible) => setVisiblePopoverId(visible ? item.id! : null)}>
-                    <button className={styles.functions} onClick={(e) => e.stopPropagation()}>
+                    <Button type='primary' className={styles.functions} onClick={(e) => e.stopPropagation()}>
                       <EditOutlined />
-                    </button>
+                    </Button>
                   </Popover>
                 </div>
               </div>

@@ -103,31 +103,33 @@
 }
 .functions {
     position: absolute;
-    right: 0;
-    top: 0;
-    margin-right: 10px;
-    margin-top: 0;
-    color: black;
+    right: 5px !important;
+    top: 5px !important;
+    color: white !important;
+    background-color: #ff7700 !important;
     border: none;
-    background:none;
-    /* z-index: 1; */
+    width: 24px;
     font-size: 24px;
     cursor: pointer;
 }
 .ordering {
     text-align: right;
+    padding-right: 10px;
+    padding-top: 5px;
 }
 .ordering > .orderButton {
-    color: #ff7700;
+    color: white !important;
+    background-color: #ff7700 !important;
+    width: 24px;
     font-size:  24px;
 }
  .orderButton:focus , .orderButton:active , .orderButton:hover {
-    color: #e65c00 !important;
-} 
+    color: #ff7700 !important;
+    background-color: white !important;} 
 
 .functions:hover  {
-    /* background-color: black; */
-    color:#e65c00 ;
+    color: #ff7700 !important;
+    background-color: white !important;
 }  
 .functions {
     position: absolute;
