@@ -75,7 +75,7 @@ const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength 
             },
             imgUrl: imgUrl || null,
             isVisible: true,
-            order: menuItemsLength
+            order: menuItemsLength+1
           },
         });
   

@@ -15,7 +15,6 @@ interface IItemOrderProps {
 
 const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userId , establishmentId , menuItems}) => {
 
-  const [, setOrderModalVisible] = useState(false);
   const [menuItem, setMenuItems] = useState<IMenuCategoryItem[]>(menuItems);
 
   const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
@@ -40,7 +39,6 @@ const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userI
       }
       return prev;
     });
-    console.log(menuItem)
   };
   
   const handleMoveDown = (id: string) => {
@@ -69,7 +67,6 @@ const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userI
       });
     try {
       message.success('');
-      setOrderModalVisible(false);
       onCancel();
     } catch (error) {
       message.error(``);

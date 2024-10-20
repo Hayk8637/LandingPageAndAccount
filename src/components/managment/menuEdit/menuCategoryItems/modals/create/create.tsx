@@ -26,7 +26,6 @@ const Create:React.FC<IAddProps> = ({isModalVisible , onCancel , userId , establ
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
-  
     useEffect(() => {
       const savedLanguage = localStorage.getItem('language');
       if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {

@@ -10,14 +10,16 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { IEstablishmentStyles, ILanguage, IMenuCategoryItems, ITranslation } from '../../../../interfaces/interfaces';
 import Create from './modals/create/create';
 import Edit from './modals/edit/edit';
+import ItemOrder from './modals/itemOrder/itemOrder';
 
 
 const MenuCategoryItems: React.FC = () => {
   const [menuItems, setMenuItems] = useState<IMenuCategoryItems[]>([]);
+  const [visiblePopoverId , setVisiblePopoverId] =  useState<string | null>(null);
   const [, setError] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDescriptionVisibale , setModalDescriptionVisibale] = useState(false);
-  const [, setEditModalVisible] = useState(false);
+  const  [editModalvisibal , setEditModalVisible] = useState(false);
   const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & { name: ITranslation, description: ITranslation  , img?: string | null }>({ 
     name: { en: '', am: '', ru: '' },
     description: { en: '', am: '', ru: '' },
@@ -43,7 +45,7 @@ const MenuCategoryItems: React.FC = () => {
       localStorage.setItem('language', 'en');
     }
   }, [currentLanguage]);
-  useEffect(()=>{},[newItem])
+  useEffect(()=>{},[newItem , menuItems , currentEditingId])
   useEffect(() => {
     const auth = getAuth();
     
@@ -95,7 +97,9 @@ const MenuCategoryItems: React.FC = () => {
     };
     
     fetchMenuItems();
-  }, [userId, establishmentId, categoryId , newItem]);
+  }, [userId, establishmentId, categoryId , newItem , modalVisible , editModalvisibal , orderModalVisible]);
+
+
 
   const handleToggleVisibility = async (id: string, isVisible: boolean) => {
     try {
@@ -106,10 +110,17 @@ const MenuCategoryItems: React.FC = () => {
       message.error('Failed to update item visibility');
     }
   };
+  const handleDeleteConfirmation = (id: string) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this item?',
+      onOk: () => handleDelete(id),
+      onCancel: () => null,
+    });
+  };
+  
 
   const handleDelete = async (id: string) => {
-    const confirm = window.confirm('Are you sure you want to delete this item?');
-    if (!confirm || !userId || !establishmentId || !categoryId) return;
+    if ( !userId || !establishmentId || !categoryId) return;
 
     try {
       const docRef = doc(db,'users', userId , 'establishments', establishmentId);
@@ -135,6 +146,7 @@ const MenuCategoryItems: React.FC = () => {
       <Button 
         onClick={(e) => { 
           e.stopPropagation(); 
+          setVisiblePopoverId(null);
           setCurrentEditingId(item.id); 
           setNewItem({
             name: item.name,
@@ -151,58 +163,14 @@ const MenuCategoryItems: React.FC = () => {
       <Button 
         onClick={(e) => { 
           e.stopPropagation(); 
-          handleDelete(item.id); 
+          setVisiblePopoverId(null);
+          handleDeleteConfirmation(item.id); 
         }}>
         Delete
       </Button>
     </div>
   );
-  const handleMoveUp = (id: string) => {
-    setMenuItems(prev => {
-      const index = prev.findIndex(item => item.id === id);
-      if (index > 0) {
-        const newItems = [...prev];
-        const [movedItem] = newItems.splice(index, 1);
-        newItems.splice(index - 1, 0, movedItem);
-        return newItems;
-      }
-      return prev;
-    });
-  };
-  
-  const handleMoveDown = (id: string) => {
-    setMenuItems(prev => {
-      const index = prev.findIndex(item => item.id === id);
-      if (index < prev.length - 1) {
-        const newItems = [...prev];
-        const [movedItem] = newItems.splice(index, 1);
-        newItems.splice(index + 1, 0, movedItem);
-        return newItems;
-      }
-      return prev;
-    });
-  };
-  const handleSaveOrder = async () => {
-    if (!userId || !establishmentId) {
-      message.error('Missing user or establishment information');
-      return;
-    }
-  
-    const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
-    
-    menuItems.forEach((item, index) => {
-      updateDoc(docRef, {
-        [`menu.items.${item.id}.order`]: index
-      });
-      });
-  
-    try {
-      message.success('Order updated successfully');
-      setOrderModalVisible(false);
-    } catch (error) {
-      message.error(`Error updating order: ${error}`);
-    }
-  };
+
   const showOrderModal = () => {
     setOrderModalVisible(true);
   };
@@ -257,7 +225,8 @@ const MenuCategoryItems: React.FC = () => {
                     content={popoverContent(item)}
                     trigger="hover"
                     placement="topRight"
-                  >
+                    open={visiblePopoverId === item.id}
+                    onOpenChange={(visible) => setVisiblePopoverId(visible ? item.id! : null)}>
                     <button className={styles.functions} onClick={(e) => e.stopPropagation()}>
                       <EditOutlined />
                     </button>
@@ -279,38 +248,8 @@ const MenuCategoryItems: React.FC = () => {
       </Modal>
       
       <Create isModalVisible={modalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItemsLength={menuItems.length} categoryId={categoryId} />
-      <Edit isModalVisible={modalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} categoryId={categoryId} currentItem={newItem} currentItemId={currentEditingId} />
-     <Modal
-        title="Change Menu Item Order"
-        open={orderModalVisible}
-        onCancel={() => setOrderModalVisible(false)}
-        footer={null}
-      >
-        <div>
-          {menuItems.map(item => (
-            <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>{item.name[currentLanguage]}</span>
-              <div>
-                <Button 
-                  disabled={menuItems[0].id === item.id} 
-                  onClick={() => handleMoveUp(item.id)}
-                >
-                  Up
-                </Button>
-                <Button 
-                  disabled={menuItems[menuItems.length - 1].id === item.id} 
-                  onClick={() => handleMoveDown(item.id)}
-                >
-                  Down
-                </Button>
-              </div>
-            </div>
-          ))}
-          <Button type="primary" onClick={handleSaveOrder}>
-            Save Order
-          </Button>
-        </div>
-      </Modal>
+      <Edit isModalVisible={editModalvisibal} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} categoryId={categoryId} currentItem={newItem} currentItemId={currentEditingId} />
+      <ItemOrder isModalVisible={orderModalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItems={menuItems} categoryId={categoryId} />
 
     </div>
   );
