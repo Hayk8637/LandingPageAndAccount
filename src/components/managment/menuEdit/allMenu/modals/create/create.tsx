@@ -3,7 +3,7 @@ import {UploadOutlined} from '@ant-design/icons'
 import { doc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../../../../../firebaseConfig';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { ILanguage, IMenuCategoryItem, ITranslation } from '../../../../../../interfaces/interfaces';
 
 interface IAddProps {
@@ -11,24 +11,16 @@ interface IAddProps {
     onCancel: () => void;
     establishmentId: any;
     userId: any;
-    menuItemsLength: number
+    menuItemsLength: number;
+    currentLanguage: ILanguage
 }
 
-const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength , establishmentId , userId}) => {
+const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength , establishmentId , userId, currentLanguage}) => {
     const [ , setMenuItems] = useState<IMenuCategoryItem[]>([]);
     const [newCategory, setNewCategory] = useState<{ name: ITranslation, imgUrl: string | null , order: number }>({ name: { en:'' ,am: '' , ru:''  }, imgUrl: null , order: 0});
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const inputRef = useRef<InputRef | null>(null); 
-    const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
-    useEffect(() => {
-      const savedLanguage = localStorage.getItem('language');
-      if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
-        setCurrentLanguage(savedLanguage);
-      } else {
-        localStorage.setItem('language', 'en');
-      }
-    }, [currentLanguage]);
 
     const handleSubmit = async () => {
       if (!newCategory.name[currentLanguage].trim()) {

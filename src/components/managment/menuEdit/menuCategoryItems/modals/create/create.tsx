@@ -1,6 +1,6 @@
 import { Button, Form, Input, message, Modal, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ILanguage, IMenuCategoryItems, ITranslation } from '../../../../../../interfaces/interfaces';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../../../../../firebaseConfig';
@@ -13,10 +13,11 @@ interface IAddProps {
     establishmentId: any;
     userId: any;
     menuItemsLength: number;
-    categoryId: any
+    categoryId: any;
+    currentLanguage: ILanguage
 }
 
-const Create:React.FC<IAddProps> = ({isModalVisible , onCancel , userId , establishmentId , menuItemsLength , categoryId}) => {
+const Create:React.FC<IAddProps> = ({isModalVisible , onCancel , userId , establishmentId , menuItemsLength , categoryId , currentLanguage}) => {
     const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & { name: ITranslation, description: ITranslation  , img?: string | null }>({ 
         name: { en: '', am: '', ru: '' },
         description: { en: '', am: '', ru: '' },
@@ -25,15 +26,6 @@ const Create:React.FC<IAddProps> = ({isModalVisible , onCancel , userId , establ
       }); 
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
-    const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
-    useEffect(() => {
-      const savedLanguage = localStorage.getItem('language');
-      if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
-        setCurrentLanguage(savedLanguage);
-      } else {
-        localStorage.setItem('language', 'en');
-      }
-    }, [currentLanguage]);
     const handleNewItemSubmit = async () => {
 
         if (!userId || !establishmentId) {

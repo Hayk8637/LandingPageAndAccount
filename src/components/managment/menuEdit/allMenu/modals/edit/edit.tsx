@@ -13,27 +13,19 @@ interface IEditProps {
   currentEditingId: any;
   userId: any;
   editingCategory: any;
+  currentLanguage: ILanguage
 }
 
-const Edit: React.FC<IEditProps> = ({ isModalVisible, onCancel, establishmentId, userId, currentEditingId, editingCategory }) => {
+const Edit: React.FC<IEditProps> = ({ isModalVisible, onCancel, establishmentId, userId, currentEditingId, editingCategory , currentLanguage }) => {
   const [editCategory, setEditCategory] = useState<{ name: ITranslation; imgUrl: string | null; order: number }>(editingCategory);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [menuItems, setMenuItems] = useState<IMenuCategoryItem[]>([]);
-  const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
 
   useEffect(() => {
     setEditCategory(editingCategory);
   }, [editingCategory]);
 
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
-      setCurrentLanguage(savedLanguage);
-    } else {
-      localStorage.setItem('language', 'en');
-    }
-  }, [currentLanguage]);
 
   const handleEditSubmit = async () => {
     if (!editCategory.name[currentLanguage]) {

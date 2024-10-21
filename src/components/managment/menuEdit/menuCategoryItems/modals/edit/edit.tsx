@@ -15,6 +15,7 @@ interface IEditProps {
   categoryId: any;
   currentItemId: any;
   currentItem: any;
+  currentLanguage: ILanguage
 }
 
 const Edit: React.FC<IEditProps> = ({
@@ -25,6 +26,7 @@ const Edit: React.FC<IEditProps> = ({
   currentItem,
   categoryId,
   currentItemId,
+  currentLanguage
 }) => {
   const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & {
     name: ITranslation;
@@ -38,16 +40,6 @@ const Edit: React.FC<IEditProps> = ({
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
-
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
-      setCurrentLanguage(savedLanguage);
-    } else {
-      localStorage.setItem('language', 'en');
-    }
-  }, [currentLanguage]);
 
   useEffect(() => {
     if (isModalVisible && currentItem) {

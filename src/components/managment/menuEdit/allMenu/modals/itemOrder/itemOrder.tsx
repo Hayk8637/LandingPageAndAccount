@@ -1,7 +1,7 @@
 import { Button, message, Modal } from 'antd'
 import {CaretDownOutlined, CaretUpOutlined} from '@ant-design/icons'
 import { doc, updateDoc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { db } from '../../../../../../firebaseConfig';
 import { ILanguage, IMenuCategoryItem } from '../../../../../../interfaces/interfaces';
 
@@ -11,23 +11,12 @@ interface IItemOrderProps {
   establishmentId: any;
   userId: any;
   menuItems: IMenuCategoryItem[]
+  currentLanguage: ILanguage
 }
 
-const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userId , establishmentId , menuItems}) => {
+const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userId , establishmentId , menuItems, currentLanguage}) => {
 
   const [menuItem, setMenuItems] = useState<IMenuCategoryItem[]>(menuItems);
-
-  const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
-    useEffect(() => {
-      const savedLanguage = localStorage.getItem('language');
-      if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
-        setCurrentLanguage(savedLanguage);
-      } else {
-        localStorage.setItem('language', 'en');
-      }
-      
-    }, [currentLanguage]);
-
   const handleMoveUp = (id: string) => {
     setMenuItems(prev => {
       const index = prev.findIndex(item => item.id === id);

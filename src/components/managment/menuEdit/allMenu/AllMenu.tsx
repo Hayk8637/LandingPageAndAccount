@@ -200,9 +200,9 @@ const AllMenu: React.FC = () => {
           <span>+</span>
         </button>
       </div>
-      {isModalVisible && (<Create isModalVisible={isModalVisible} onCancel={handleCancel} menuItemsLength={menuItems.length} establishmentId={establishmentId} userId={userId} />)}
-      {isEditModalVisible && (<Edit isModalVisible={isEditModalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} currentEditingId={currentEditingId} editingCategory={newCategory}/>)}
-      {orderModalVisible && (<ItemOrder isModalVisible={orderModalVisible} onCancel={handleCancel} userId={userId} establishmentId={establishmentId} menuItems={menuItems} />)}
+      {isModalVisible && (<Create isModalVisible={isModalVisible} onCancel={handleCancel} menuItemsLength={menuItems.length} establishmentId={establishmentId} userId={userId} currentLanguage={currentLanguage} />)}
+      {isEditModalVisible && (<Edit isModalVisible={isEditModalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} currentEditingId={currentEditingId} editingCategory={newCategory} currentLanguage={currentLanguage} />)}
+      {orderModalVisible && (<ItemOrder isModalVisible={orderModalVisible} onCancel={handleCancel} userId={userId} establishmentId={establishmentId} menuItems={menuItems} currentLanguage={currentLanguage} />)}
     
     </div>
   );

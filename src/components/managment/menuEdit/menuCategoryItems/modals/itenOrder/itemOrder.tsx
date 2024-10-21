@@ -11,6 +11,7 @@ interface IItemOrderProps {
   userId: any;
   menuItems: IMenuCategoryItems[];
   categoryId: any;
+  currentLanguage: ILanguage
 }
 
 const ItemOrder: React.FC<IItemOrderProps> = ({
@@ -19,26 +20,16 @@ const ItemOrder: React.FC<IItemOrderProps> = ({
   establishmentId,
   userId,
   menuItems,
-  categoryId
+  categoryId,
+  currentLanguage
 }) => {
   const [menuItem0, setMenuItems] = useState<IMenuCategoryItems[]>([]);
-  const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
 
   useEffect(() => {
     if (menuItems) {
       setMenuItems(menuItems);
     }
   }, [menuItems]);
-
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language');
-    if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
-      setCurrentLanguage(savedLanguage);
-    } else {
-      localStorage.setItem('language', 'en');
-    }
-  }, [currentLanguage]);
-
   const handleMoveUp = (id: string) => {
     setMenuItems((prev) => {
       const index = prev.findIndex((item) => item.id === id);

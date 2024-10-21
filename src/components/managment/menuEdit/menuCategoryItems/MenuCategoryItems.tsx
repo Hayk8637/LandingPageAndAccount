@@ -256,9 +256,9 @@ const MenuCategoryItems: React.FC = () => {
         </Card>
       </Modal>    
 
-      <Create isModalVisible={modalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItemsLength={menuItems.length} categoryId={categoryId} />
-      <Edit isModalVisible={editModalvisibal} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} categoryId={categoryId} currentItem={newItem} currentItemId={currentEditingId} />
-      <ItemOrder isModalVisible={orderModalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItems={menuItems} categoryId={categoryId} />
+      <Create isModalVisible={modalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItemsLength={menuItems.length} categoryId={categoryId} currentLanguage={currentLanguage}/>
+      <Edit isModalVisible={editModalvisibal} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} categoryId={categoryId} currentItem={newItem} currentItemId={currentEditingId} currentLanguage={currentLanguage}/>
+      <ItemOrder isModalVisible={orderModalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItems={menuItems} categoryId={categoryId} currentLanguage={currentLanguage}/>
     </div>
   );
 };
