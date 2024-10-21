@@ -10,7 +10,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { IEstablishmentStyles, ILanguage, IMenuCategoryItems, ITranslation } from '../../../../interfaces/interfaces';
 import Create from './modals/create/create';
 import Edit from './modals/edit/edit';
-import ItemOrder from './modals/itemOrder/itemOrder';
+import ItemOrder from './modals/itenOrder/itemOrder';
 
 
 const MenuCategoryItems: React.FC = () => {
@@ -241,16 +241,24 @@ const MenuCategoryItems: React.FC = () => {
       </Button>
       
 
-      <Modal title="Description" open={modalDescriptionVisibale} onCancel={() => {setModalDescriptionVisibale(false); }}footer={null}>
-        <Card cover={newItem.img && <img alt="" src={newItem.img} />} style={{ width: 260 }}>
-          <Meta  title={newItem.name[currentLanguage]} description={newItem.description[currentLanguage]} />
+      <Modal styles={{body: {backgroundColor: `#${establishmentStyles?.color1}`, width: 260 } , 
+                                          content: {backgroundColor: `#${establishmentStyles?.color1}`, width: '306px' , margin: 'auto'}
+        }} open={modalDescriptionVisibale} onCancel={() => {setModalDescriptionVisibale(false); }}footer={null} >
+        <Card color={`#${establishmentStyles?.color2}`} cover={newItem.img && <img alt="" src={newItem.img} />}  style={{ width: 260, color: `#${establishmentStyles?.color2}` , background: 'none' , borderColor: `#${establishmentStyles?.color2}` }}>
+          <Meta title={
+                  <span style={{ color: `#${establishmentStyles?.color2}` }}>
+                    {newItem.name[currentLanguage]}
+                  </span>}
+                description={
+                  <span style={{ color: `#${establishmentStyles?.color2}` }}>
+                    {newItem.description[currentLanguage]}
+                  </span>}/>
         </Card>
       </Modal>    
-      
+
       <Create isModalVisible={modalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItemsLength={menuItems.length} categoryId={categoryId} />
       <Edit isModalVisible={editModalvisibal} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} categoryId={categoryId} currentItem={newItem} currentItemId={currentEditingId} />
       <ItemOrder isModalVisible={orderModalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItems={menuItems} categoryId={categoryId} />
-
     </div>
   );
 };
