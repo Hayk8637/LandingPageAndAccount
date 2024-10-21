@@ -13,6 +13,9 @@
   width: 100%;
   overflow: hidden; 
   justify-content: flex-start; 
+  margin: auto;
+  text-align: center;
+  width: auto ;
 }
 
 .establishmentContainer {
@@ -119,4 +122,77 @@
   margin-top: 10px;
   text-align: center;
   display: block;
+}
+@media (max-width: 520px) {
+  .establishmentContainer{
+    width: 150px;
+    height: 150px;
+  }
+  .addEstablishments {
+    width: 171.6px; 
+    height: 171.6px;
+  }
+  .items {
+    max-width: 369px;
+    text-align: center; 
+  }
+}
+@media (max-width: 430px) {
+  .items {
+    max-width: 269px;
+    text-align: center; 
+  }
+  .establishmentContainer{
+    width: 100px;
+    height: 100px;
+  }
+  .addEstablishments {
+    width: 121.6px; 
+    height: 121.6px;
+  }
+  
+}
+
+@media (max-width: 430px) {
+  .items {
+    max-width: 269px;
+    text-align: center; 
+  }
+  .establishmentContainer{
+    width: 90px;
+    height: 90px;
+  }
+  .addEstablishments {
+    width: 111.6px; 
+    height: 111.6px;
+  }
+  .content > p {
+    display: none;
+  }
+  .content {
+    justify-content: center;
+  }
+  .content > .icons {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 278px) {
+  .items {
+    text-align: center; 
+  }
+  .establishmentContainer{
+    width: 70px;
+    height: 70px;
+  }
+  .addEstablishments {
+    width: 91.6px; 
+    height: 91.6px;
+  }
+  .content > p {
+    display: none;
+  }
+  .content {
+    justify-content: center;
+  }
 }

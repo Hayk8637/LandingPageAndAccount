@@ -13,8 +13,6 @@ import Edit from './modals/edit/edit';
 
 const AllMenu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<IMenuCategoryItem[]>([]);
-  const [, setLoading] = useState(true);
-  const [, setError] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [newCategory, setNewCategory] = useState<{ name: ITranslation, imgUrl: string | null , order: number }>({ name: { en:'' ,am: '' , ru:''  }, imgUrl: null , order: 0});
@@ -28,6 +26,7 @@ const AllMenu: React.FC = () => {
   const inputRef = useRef<InputRef | null>(null); 
   const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
   const [visiblePopoverId , setVisiblePopoverId] =  useState<string | null>(null);
+  
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
@@ -74,12 +73,8 @@ const AllMenu: React.FC = () => {
             items.sort((a, b) => a.order - b.order);
             setMenuItems(items);
           } else {
-            setError('No categories found');
           }
         } catch (error) {
-          setError('Error fetching menu items');
-        } finally {
-          setLoading(false);
         }
       }
     };

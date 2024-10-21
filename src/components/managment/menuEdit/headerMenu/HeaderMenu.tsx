@@ -93,7 +93,7 @@ const HeaderMenu: React.FC = () => {
     };
 
     const popoverContent = (
-        <div style={{ width: 'calc(100% )' }}>
+        <div style={{ width: '240px' , backgroundColor: `#${establishmentStyles?.color1}`, color: `#${establishmentStyles?.color2}`, border: 'none' }}>
             {[
                 { icon: <WifiOutlined size={32} style={{paddingRight: '10px'}}/>, label: 'WiFi Name', value: popoverData.wifiname },
                 { icon: <LockOutlined style={{paddingRight: '10px'}}/>, label: 'WiFi Password', value: popoverData.wifipass},
@@ -102,7 +102,7 @@ const HeaderMenu: React.FC = () => {
             ].map(({ icon, label, value }) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <p><strong>{icon}: </strong> {value}</p>
-                    <Button icon={<CopyOutlined />} onClick={() => copyToClipboard(value)}>Copy</Button>
+                    <Button icon={<CopyOutlined />} onClick={() => copyToClipboard(value)} style={{backgroundColor: `#${establishmentStyles?.color1}`, color: `#${establishmentStyles?.color2}` , borderColor: `#${establishmentStyles?.color2}`}}>Copy</Button>
                 </div>
             ))}
         </div>
@@ -155,7 +155,7 @@ const HeaderMenu: React.FC = () => {
               ))}
           </select>
         ) : null}
-                <Popover placement="bottomRight" style={{padding:'15px'}} content={popoverContent} arrow>
+                <Popover placement="bottomRight" style={{padding:'15px'}} color={`#${establishmentStyles?.color1}`} content={popoverContent} arrow>
                   <Button type="link" className={styles.info}
                       style={{ color: textColor }}
                       onMouseEnter={() => setTextColor(`#${establishmentStyles?.color3}`)}

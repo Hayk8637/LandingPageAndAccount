@@ -40,6 +40,8 @@ const Header: React.FC = () => {
       localStorage.setItem('language', 'en');
     }
   }, []);
+
+  useEffect(()=>{}, [popoverData])
   useEffect(() => {
     if (!currentLanguage) {
       if (languages?.en) {
@@ -137,7 +139,7 @@ const Header: React.FC = () => {
     
     const db = getFirestore();
     const docRef = doc(db, 'users', user.uid, 'establishments', establishmentId);
-  
+    
     const currentDocSnap = await getDoc(docRef);
     if (currentDocSnap.exists()) {  
       await updateDoc(docRef, {
@@ -147,10 +149,11 @@ const Header: React.FC = () => {
         'info.currency': values.currency,
         'info.phone': values.phone,
       });
+      setPopoverData({wifiname: values.wifiname , wifipass: values.wifipass ,address:  values.address, currency: values.currency, phone: values.phone})
     } else {
       notification.error({ message: 'Error', description: 'Document does not exist' });
     }
-  
+    
     notification.success({ message: 'Success', description: 'Details updated successfully' });
     closeModal();
 
@@ -211,21 +214,27 @@ const Header: React.FC = () => {
       notification.error({ message: 'Failed to copy', description: 'Unable to copy text' });
     });
   };
+  const truncateText = (text: string, maxLength = 15) =>
+    text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+  
   const popoverContent = (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '240px' , backgroundColor: `#${establishmentStyles?.color1}`, color: `#${establishmentStyles?.color2}`, border: 'none' }}>
       {[
         { icon: <WifiOutlined size={32} />, label: 'WiFi Name', value: popoverData.wifiname },
         { icon: <LockOutlined />, label: 'WiFi Password', value: popoverData.wifipass },
         { icon: <EnvironmentOutlined />, label: 'Address', value: popoverData.address },
         { icon: <PhoneOutlined />, label: 'Phone', value: popoverData.phone },
       ].map(({ icon, label, value }) => (
-        <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p><strong>{icon}: </strong> {value}</p>
-          <Button icon={<CopyOutlined />} onClick={() => copyToClipboard(value)}>Copy</Button>
+        <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' , border: 'none' }}>
+          <p>
+            <strong>{icon}: </strong> {truncateText(value)}
+          </p>
+          <Button icon={<CopyOutlined />} onClick={() => copyToClipboard(value)} style={{backgroundColor: `#${establishmentStyles?.color1}`, color: `#${establishmentStyles?.color2}` , borderColor: `#${establishmentStyles?.color2}`}}>Copy</Button>
         </div>
       ))}
     </div>
   );
+  
 
   return (
     <>
@@ -266,12 +275,12 @@ const Header: React.FC = () => {
                   }}
                 >
                   {language.toUpperCase()}
-                </option>
+                </option> 
               ))}
           </select>
         ) : null}
 
-            <Popover placement="bottomRight" content={popoverContent} arrow>
+            <Popover placement="bottomRight" content={popoverContent} arrow color={`#${establishmentStyles?.color1}`}> 
               <Button type="link" className={styles.info} 
                style={{ color: textColor }}
                   onMouseEnter={() => setTextColor(`#${establishmentStyles?.color3}`)}

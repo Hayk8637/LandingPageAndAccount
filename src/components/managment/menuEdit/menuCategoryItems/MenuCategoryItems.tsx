@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, message, Popover, Switch } from 'antd';
+import { Modal, Button, message, Popover, Switch, Card } from 'antd';
 import { EditOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { doc, updateDoc, getDoc, deleteField } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
@@ -26,7 +26,7 @@ const MenuCategoryItems: React.FC = () => {
     img: null,
     order: 0,
   }); 
-
+  const { Meta } = Card;
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
   const [orderModalVisible, setOrderModalVisible] = useState(false);
   const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
@@ -241,11 +241,11 @@ const MenuCategoryItems: React.FC = () => {
       </Button>
       
 
-      <Modal title="Description" open={modalDescriptionVisibale} onCancel={() => {setModalDescriptionVisibale(false)}} footer={null}>
-          <h1>{newItem.name[currentLanguage]}</h1>
-           {newItem.img && establishmentStyles?.showImg ? <img width={'100px'} height={'100px'} src={newItem.img} alt="img" /> : null }
-          <span style={{display: 'block'}}>{newItem.description[currentLanguage]}</span>
-      </Modal>
+      <Modal title="Description" open={modalDescriptionVisibale} onCancel={() => {setModalDescriptionVisibale(false); }}footer={null}>
+        <Card cover={newItem.img && <img alt="" src={newItem.img} />} style={{ width: 260 }}>
+          <Meta  title={newItem.name[currentLanguage]} description={newItem.description[currentLanguage]} />
+        </Card>
+      </Modal>    
       
       <Create isModalVisible={modalVisible} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} menuItemsLength={menuItems.length} categoryId={categoryId} />
       <Edit isModalVisible={editModalvisibal} onCancel={handleCancel} establishmentId={establishmentId} userId={userId} categoryId={categoryId} currentItem={newItem} currentItemId={currentEditingId} />

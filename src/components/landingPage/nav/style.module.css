@@ -1,5 +1,5 @@
 .nav {
-    width: 99%;
+    width:calc(99% - 20px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -94,7 +94,6 @@
     .userEmail {
         display: none;
     }
-
     .userIcon {
         color: #ff7700; 
         border: none; 
