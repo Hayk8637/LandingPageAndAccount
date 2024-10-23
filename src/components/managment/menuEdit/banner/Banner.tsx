@@ -126,6 +126,7 @@ const Banner: React.FC = () => {
   const handleDelete = (id: string) => {
     Modal.confirm({
       title: 'Confirm Deletion',
+      okText: 'yes',
       content: 'Are you sure you want to delete this banner image?',
       onOk: async () => {
         if (userId && establishmentId) {
@@ -143,9 +144,9 @@ const Banner: React.FC = () => {
               });
     
               setBannerImages((prev) => prev.filter((image) => image.id !== id));
-              notification.success({ message: 'Success' });
+              notification.success({ message: '' });
             } else {
-              notification.error({ message: 'Error' });
+              notification.error({ message: '' });
             }
           } catch (error) {
             notification.error({

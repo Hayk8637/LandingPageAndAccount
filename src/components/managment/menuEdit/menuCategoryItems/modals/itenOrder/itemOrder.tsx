@@ -1,5 +1,6 @@
 import { Button, message, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
+import {CaretDownOutlined, CaretUpOutlined} from '@ant-design/icons'
 import { ILanguage, IMenuCategoryItems } from '../../../../../../interfaces/interfaces';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../../../../firebaseConfig';
@@ -73,10 +74,10 @@ const ItemOrder: React.FC<IItemOrderProps> = ({
         ) 
       );
 
-      message.success('Order updated successfully');
+      message.success('');
       onCancel();
     } catch (error) {
-      message.error(`Error updating order: ${error}`);
+      message.error(``);
     }
   };
 
@@ -92,15 +93,14 @@ const ItemOrder: React.FC<IItemOrderProps> = ({
             <div>
               <Button
                 disabled={menuItem0[0].id === item.id}
-                onClick={() => handleMoveUp(item.id)}
-              >
-                Up
+                onClick={() => handleMoveUp(item.id)}>
+                  <CaretUpOutlined />
               </Button>
               <Button
                 disabled={menuItem0[menuItem0.length - 1].id === item.id}
                 onClick={() => handleMoveDown(item.id)}
               >
-                Down
+                  <CaretDownOutlined />
               </Button>
             </div>
           </div>

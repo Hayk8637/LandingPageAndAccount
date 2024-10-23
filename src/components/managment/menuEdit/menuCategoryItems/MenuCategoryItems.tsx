@@ -136,7 +136,6 @@ const MenuCategoryItems: React.FC = () => {
   const popoverContent = (item: IMenuCategoryItems) => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ marginBottom: 8 }}>
-        <span>Visibility:</span>
         <Switch 
           checkedChildren="show" unCheckedChildren="don't show"
           checked={item.isVisible} 
