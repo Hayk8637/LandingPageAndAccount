@@ -47,7 +47,7 @@ const Edit: React.FC<IEditProps> = ({ isModalVisible, onCancel, establishmentId,
           'state_changed',
           () => {},
           (error) => {
-            message.error(`Upload failed: ${error.message}`);
+            message.error(``);
             reject(error);
           },
           async () => {

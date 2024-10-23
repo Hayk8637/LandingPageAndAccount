@@ -55,7 +55,7 @@ const Edit: React.FC<IEditProps> = ({
 
   const handleEditItemSubmit = async () => {
     if (!currentItemId || !newItem.name?.en || !newItem.name?.ru || !newItem.name?.am || !newItem.price || !userId || !establishmentId) {
-      message.error('Please fill all fields');
+      message.error('');
       return;
     }
     setUploading(true);
@@ -89,7 +89,7 @@ const Edit: React.FC<IEditProps> = ({
           isVisible: true,
         },
       });
-      message.success('Item updated successfully');
+      message.success('');
       onCancel();
       setNewItem({
         name: { en: '', am: '', ru: '' },
@@ -99,7 +99,7 @@ const Edit: React.FC<IEditProps> = ({
       });
       setImageFile(null);
     } catch (error) {
-      message.error('Failed to update item');
+      message.error('');
     } finally {
       setUploading(false);
     }
@@ -127,7 +127,7 @@ const Edit: React.FC<IEditProps> = ({
             }
           />
         </Form.Item>
-        <Form.Item label="Item Description" required>
+        <Form.Item label="Item Description">
           <Input
             placeholder="Item Description"
             value={newItem.description?.[currentLanguage] || ''}

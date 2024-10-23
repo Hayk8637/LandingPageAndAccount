@@ -87,10 +87,10 @@ const MenuCategoryItems: React.FC = () => {
             setEstablishmentStyles(data.styles)
             setCurrency(data.information.currency);
           } else {
-            setError('No menu items found for this category');
+            setError('');
           }
         } catch (error) {
-          setError('Error fetching menu items');
+          setError('');
         } finally {
         }
       }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './style.module.css';
-import { Carousel, Button, Modal, Upload, notification, List } from 'antd';
+import { Carousel, Button, Modal, Upload, notification, List, message } from 'antd';
 import { EditOutlined, UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload/interface';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -68,10 +68,10 @@ const Banner: React.FC = () => {
               setEstablishmentStyles(data.styles);
             }
           } else {
-            notification.error({ message: 'Error', description: 'Failed to fetch banners.' });
+            message.error('');
           }
         } catch (error) {
-          notification.error({ message: 'Error', description: `Error fetching banner images: ${error}` });
+          message.error('');
         }
       }
     };
@@ -81,7 +81,7 @@ const Banner: React.FC = () => {
 
   const handleUpload = async (file: RcFile) => {
     if (!file) {
-      notification.error({ message: 'Error', description: 'No file selected for upload' });
+      notification.error({ message: '' });
       return;
     }
 
@@ -95,7 +95,7 @@ const Banner: React.FC = () => {
       'state_changed',
       (snapshot) => {},
       (error) => {
-        notification.error({ message: 'Upload Failed', description: error.message });
+        message.error('');
         setUploading(false);
       },
       async () => {
@@ -108,13 +108,11 @@ const Banner: React.FC = () => {
             });
             const newBannerImage: IBannerImage = { id: uniqueId, url: downloadURL };
             setBannerImages((prev) => [...prev, newBannerImage]);
-            notification.success({ message: 'Success' });
+            message.success('');
           }
         } catch (error) {
-          notification.error({
-            message: 'Update Failed',
-            description: ``,
-          });
+          message.error('');
+
         } finally {
           setUploading(false);
         }
@@ -137,38 +135,38 @@ const Banner: React.FC = () => {
             if (docSnap.exists()) {
               const data = docSnap.data();
               const updatedBannerUrls = { ...data.info.bannerUrls };
-              delete updatedBannerUrls[id]; // Remove the banner using its ID
+              delete updatedBannerUrls[id]; 
     
               await updateDoc(docRef, {
-                'info.bannerUrls': updatedBannerUrls, // Update the entire object
+                'info.bannerUrls': updatedBannerUrls, 
               });
     
               setBannerImages((prev) => prev.filter((image) => image.id !== id));
-              notification.success({ message: '' });
+              message.success('');
             } else {
-              notification.error({ message: '' });
+              message.error('');
             }
           } catch (error) {
-            notification.error({
-              message: 'Delete Failed',
-            });
+            message.error('');
+
           }
         }
       },
-      onCancel() {
-        console.log('Delete canceled');
-      },
+      onCancel() {},
     });
   };
   
   return (
     <div className={styles.banner} style={{backgroundColor: `#${establishmentStyles?.color1}`}}>
       {bannerImages.length === 0 ? (
-        <div style={{ backgroundColor: '#ffbf87', height: '200px', width: '95%' ,borderRadius: '22px', margin: 'auto' }}>
-          <Button type="primary" onClick={showModal} className={styles.editButton}>
-            <EditOutlined />
-          </Button>
+        <div style={{minHeight: '201px' , paddingTop: '15px' , paddingBottom: '15px'}}>
+            <div style={{ backgroundColor: '#ffbf87', height: '200px', width: '95%' ,borderRadius: '22px', margin: 'auto' }}>
+            <Button type="primary" onClick={showModal} className={styles.editButton}>
+              <EditOutlined />
+            </Button>
+          </div>
         </div>
+        
       ) : (
         <div style={{ position: 'relative' }}>
           <Carousel autoplay autoplaySpeed={4000} speed={1000} className={styles.bannerCarousel} dots={false}>

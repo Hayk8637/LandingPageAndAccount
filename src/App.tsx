@@ -19,8 +19,6 @@ function App() {
             <Route path="/profile/establishments/" element={<Establishments />} />
             <Route path="/profile/establishments/:establishmentId/" element={<HomeMenu />} />
             <Route path="/profile/establishments/:establishmentId/:categoryId" element={<Menu />} />
-            <Route path='/:userId/:establishmentId' element={<HomeMenu/>} />
-            <Route path='/:userId/:establishmentId/:categoryId' element={<Menu/>} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>

@@ -3,7 +3,7 @@ import {UploadOutlined} from '@ant-design/icons'
 import { doc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../../../../../firebaseConfig';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ILanguage, IMenuCategoryItem, ITranslation } from '../../../../../../interfaces/interfaces';
 
 interface IAddProps {
@@ -21,6 +21,12 @@ const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength 
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const inputRef = useRef<InputRef | null>(null); 
+
+    useEffect(() => {
+      if (isModalVisible && inputRef.current) {
+          inputRef.current.focus();
+      }
+  }, [isModalVisible]);
 
     const handleSubmit = async () => {
       if (!newCategory.name[currentLanguage].trim()) {

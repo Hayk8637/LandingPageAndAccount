@@ -128,6 +128,7 @@ const AllMenu: React.FC = () => {
   const handleDeleteConfirmation = (id: string) => {
     Modal.confirm({
       title: 'Are you sure you want to delete this category?',
+      okText: 'Yes',
       onOk: () => handleDelete(id),
       onCancel: () => null,
     });

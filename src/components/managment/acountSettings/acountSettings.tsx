@@ -13,7 +13,6 @@ const AccountSettings: React.FC = () => {
   const [emailVerified, setEmailVerified] = useState(false);
   const [email, setEmail] = useState('');
   const [user, setUser] = useState<any>(null);
-
   const auth = getAuth();
   const { t, i18n } = useTranslation("global");
 

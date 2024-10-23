@@ -75,7 +75,7 @@ const Header: React.FC = () => {
       const fetchEstablishmentData = async () => {
         try {
           if (!userId) {
-            notification.error({ message: 'Error', description: 'User is not authenticated' });
+            notification.error({ message: '' });
             return;
           }
           const db = getFirestore();
@@ -98,10 +98,10 @@ const Header: React.FC = () => {
               ru: data.languages.ru
              })
           } else {
-            notification.error({ message: 'Error', description: 'Document does not exist' });
+            notification.error({ message: '' });
           }
         } catch (error) {
-          notification.error({ message: 'Error', description: 'Failed to fetch establishment data' });
+          notification.error({ message: '' });
         }
       };
       fetchEstablishmentData();
@@ -126,14 +126,14 @@ const Header: React.FC = () => {
 
   const handleFormSubmit = async (values: IInfoValues) => {
     if (!establishmentId) {
-      notification.error({ message: 'Error', description: 'Establishment ID is not set' });
+      notification.error({ message: '' });
       return;
     }
   
     const auth = getAuth();
     const user = auth.currentUser;
     if (!user) {
-      notification.error({ message: 'Error', description: 'User is not authenticated' });
+      notification.error({ message: '' });
       return;
     }
     
@@ -151,10 +151,10 @@ const Header: React.FC = () => {
       });
       setPopoverData({wifiname: values.wifiname , wifipass: values.wifipass ,address:  values.address, currency: values.currency, phone: values.phone})
     } else {
-      notification.error({ message: 'Error', description: 'Document does not exist' });
+      notification.error({ message: '' });
     }
     
-    notification.success({ message: 'Success', description: 'Details updated successfully' });
+    notification.success({ message: '' });
     closeModal();
 
   };
@@ -162,7 +162,7 @@ const Header: React.FC = () => {
 
   const handleLogoUpload = (file: File) => {
     if (!file) {
-      notification.error({ message: 'Error', description: 'No file selected for upload' });
+      notification.error({ message: '' });
       return false;
     }
     setUploading(true);
@@ -173,7 +173,7 @@ const Header: React.FC = () => {
       'state_changed',
       (snapshot) => {},
       (error) => {
-        notification.error({ message: 'Upload Failed', description: error.message });
+        notification.error({ message: '' });
         setUploading(false);
       },
       async () => {
@@ -195,10 +195,10 @@ const Header: React.FC = () => {
             await updateDoc(docRef, {
               'info.logoUrl': downloadURL,
             });
-            notification.success({ message: 'Logo Uploaded', description: 'Your logo has been successfully uploaded.' });
+            notification.success({ message: '' });
           }
         } catch (error) {
-          notification.error({ message: 'Update Failed', description: 'Failed to update logo URL in Firestore.' });
+          notification.error({ message: '' });
         } finally {
           setUploading(false);
         }

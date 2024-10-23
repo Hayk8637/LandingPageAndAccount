@@ -56,10 +56,10 @@ const MenuCategoryNavigation: React.FC = () => {
               setEstablishmentStyles(data.styles)
               setCategories(items);
             } else {
-              setError('No categories found');
+              setError('');
             }
           } catch (error) {
-            setError('Error fetching menu items');
+            setError('');
           } finally {
           }
         }

@@ -59,7 +59,7 @@ const ItemOrder: React.FC<IItemOrderProps> = ({
 
   const handleSaveOrder = async () => {
     if (!userId || !establishmentId) {
-      message.error('Missing user or establishment information');
+      message.error('');
       return;
     }
 

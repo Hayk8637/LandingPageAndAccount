@@ -1,5 +1,5 @@
-import { Button, Form, Input, Modal } from 'antd'
-import React, { useState } from 'react'
+import { Button, Form, Input, InputRef, Modal } from 'antd'
+import React, { useEffect, useRef, useState } from 'react'
 import { db, storage } from '../../../../../firebaseConfig';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { IEstablishment } from '../../../../../interfaces/interfaces';
@@ -14,6 +14,13 @@ interface IAddEstablishmentProps{
 
 const AddEstablishment:React.FC<IAddEstablishmentProps> = ({isModalVisible , onCancel , form }) => {
     const [bannerFiles, setBannerFiles] = useState<File[]>([]);
+    const inputRef = useRef<InputRef | null>(null); 
+
+    useEffect(() => {
+      if (isModalVisible && inputRef.current) {
+          inputRef.current.focus();
+      }
+  }, [isModalVisible]);
     const handleAddEstablishment = async (values: any) => {
         const userId = getAuth().currentUser?.uid;
         try {
@@ -72,7 +79,7 @@ const AddEstablishment:React.FC<IAddEstablishmentProps> = ({isModalVisible , onC
             label="Establishment Name"
             name="name"
             rules={[{ required: true, message: 'Please input the name of the establishment!' }]}>
-            <Input placeholder="Enter establishment name" />
+            <Input placeholder="Enter establishment name" ref={inputRef} />
           </Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: '100%' }} >
             Add Establishment
