@@ -32,11 +32,14 @@ const Edit: React.FC<IEditProps> = ({
     name: ITranslation;
     description: ITranslation;
     img?: string | null;
+    order: number;
+    isVisible: boolean;
   }>({
     name: { en: '', am: '', ru: '' },
     description: { en: '', am: '', ru: '' },
     img: '',
     order: 0,
+    isVisible: true
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -49,13 +52,14 @@ const Edit: React.FC<IEditProps> = ({
         img: currentItem.img,
         order: currentItem.order,
         price: currentItem.price,
+        isVisible: currentItem.isVisible
       });
     }
   }, [isModalVisible, currentItem]);
 
   const handleEditItemSubmit = async () => {
-    if (!currentItemId || !newItem.name?.en || !newItem.name?.ru || !newItem.name?.am || !newItem.price || !userId || !establishmentId) {
-      message.error('');
+    if (!currentItemId || !currentItem.order  || !newItem.name?.en || !newItem.name?.ru || !newItem.name?.am || !newItem.price || !userId || !establishmentId) {
+      message.error('1');
       return;
     }
     setUploading(true);
@@ -86,19 +90,21 @@ const Edit: React.FC<IEditProps> = ({
           description: updatedDescription,
           price: newItem.price,
           img: imageUrl,
-          isVisible: true,
+          order:currentItem.order
         },
       });
-      message.success('');
+      message.success('2');
       onCancel();
       setNewItem({
         name: { en: '', am: '', ru: '' },
         description: { en: '', am: '', ru: '' },
         img: null,
         order: 0,
+        isVisible: true
       });
       setImageFile(null);
     } catch (error) {
+      
       message.error('');
     } finally {
       setUploading(false);
@@ -115,6 +121,7 @@ const Edit: React.FC<IEditProps> = ({
         <Form.Item label="Item Name" required>
           <Input
             placeholder="Item Name"
+            maxLength={21}
             value={newItem.name?.[currentLanguage] || ''}
             onChange={(e) =>
               setNewItem({

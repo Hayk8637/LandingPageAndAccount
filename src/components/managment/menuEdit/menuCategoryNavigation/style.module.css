@@ -1,8 +1,8 @@
 .menuCategoryNavigation {
     width: 100%;
-    max-width: 400px; /* Max width to limit the container's size */
-    overflow-x: auto; /* Enables horizontal scrolling */
-    white-space: nowrap; /* Prevents wrapping of items, allowing horizontal scroll */
+    max-width: 400px; 
+    overflow-x: auto; 
+    white-space: nowrap;
     padding-top: 20px;
     padding-bottom: 20px;
     position: fixed;
@@ -13,13 +13,14 @@
 
 .menuCategoryNavigation > .a, 
 .menuCategoryNavigation > .activeTab {
-    display: inline-block; /* Allows them to line up horizontally */
+    display: inline-block; 
     padding: 9px 22px;
     border-radius: 6px;
     text-decoration: none;
     margin-right: 10px;
     color: #B3B3B3;
     margin-left: 10px;
+    cursor: pointer;
 }
 
 .menuCategoryNavigation > .a {

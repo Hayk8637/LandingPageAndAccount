@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, message, Popover, Switch, Card } from 'antd';
 import { EditOutlined, OrderedListOutlined } from '@ant-design/icons';
-import { doc, updateDoc, getDoc, deleteField } from 'firebase/firestore';
+import { updateDoc, getDoc, deleteField, doc } from 'firebase/firestore';
 import { db } from '../../../../firebaseConfig';
 import styles from './style.module.css';
 import defimg from '../../../../assets/img/pngwi.png'
@@ -20,11 +20,13 @@ const MenuCategoryItems: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDescriptionVisibale , setModalDescriptionVisibale] = useState(false);
   const  [editModalvisibal , setEditModalVisible] = useState(false);
-  const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & { name: ITranslation, description: ITranslation  , img?: string | null }>({ 
+  const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & {id: any, name: ITranslation, description: ITranslation  , img?: string | null, order: number , isVisible: boolean }>({ 
     name: { en: '', am: '', ru: '' },
     description: { en: '', am: '', ru: '' },
     img: null,
     order: 0,
+    isVisible: true,
+    id: ''
   }); 
   const { Meta } = Card;
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
@@ -97,17 +99,29 @@ const MenuCategoryItems: React.FC = () => {
     };
     
     fetchMenuItems();
-  }, [userId, establishmentId, categoryId , newItem , modalVisible , editModalvisibal , orderModalVisible]);
+  }, [userId, establishmentId, categoryId]);
 
-
+  
 
   const handleToggleVisibility = async (id: string, isVisible: boolean) => {
+    setModalDescriptionVisibale(false)
+    if(!userId || !establishmentId){
+      return;
+    }
     try {
-      const docRef = doc(db, 'establishments', establishmentId, 'categories', categoryId, 'menuItems', id);
-      await updateDoc(docRef, { isVisible });
-      message.success(`Item visibility updated to ${isVisible ? 'visible' : 'hidden'}`);
+      const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
+      setMenuItems((menuItems) =>
+        menuItems.map((item) =>
+          item.id === id ? { ...item, isVisible } : item
+        )
+      );      
+      await updateDoc(docRef, {
+        [`menu.items.${categoryId}.${id}.isVisible`]: isVisible,
+      });
+      
+      message.success(``);
     } catch (error) {
-      message.error('Failed to update item visibility');
+      message.error('');
     }
   };
   const handleDeleteConfirmation = (id: string) => {
@@ -128,9 +142,9 @@ const MenuCategoryItems: React.FC = () => {
         [`menu.items.${categoryId}.${id}`]: deleteField(),
       });
       setMenuItems((prev) => prev.filter(item => item.id !== id));
-      message.success('Item deleted successfully');
+      message.success('');
     } catch (error) {
-      message.error('Failed to delete item');
+      message.error('');
     }
   };
   const popoverContent = (item: IMenuCategoryItems) => (
@@ -139,8 +153,7 @@ const MenuCategoryItems: React.FC = () => {
         <Switch 
           checkedChildren="show" unCheckedChildren="don't show"
           checked={item.isVisible} 
-          onChange={(checked) => handleToggleVisibility(item.id, checked)} 
-        />
+          onChange={(checked) => handleToggleVisibility(item.id, checked)}/>
       </div>
       <Button 
         onClick={(e) => { 
@@ -148,10 +161,13 @@ const MenuCategoryItems: React.FC = () => {
           setVisiblePopoverId(null);
           setCurrentEditingId(item.id); 
           setNewItem({
+            id: item.id,
             name: item.name,
             description: item.description,
             price: item.price,
-            img: item.img
+            img: item.img,
+            order: item.order,
+            isVisible: item.isVisible
           });
           setEditModalVisible(true); 
         }} 
@@ -163,7 +179,7 @@ const MenuCategoryItems: React.FC = () => {
         onClick={(e) => { 
           e.stopPropagation(); 
           setVisiblePopoverId(null);
-          handleDeleteConfirmation(item.id); 
+          handleDeleteConfirmation(item.id);
         }}>
         Delete
       </Button>
@@ -193,14 +209,16 @@ const MenuCategoryItems: React.FC = () => {
               <div key={item.id} className={styles.menuCategoryItem} onClick={(e) => { 
                 e.stopPropagation(); 
                 setNewItem({
+                  id: item.id,
                   name: item.name,
                   description: item.description,
                   price: item.price,
-                  img: item.img
+                  img: item.img,
+                  order: item.order,
+                  isVisible: item.isVisible
                 });
-                setModalDescriptionVisibale(true); 
               }} style={{border: `1px solid #${establishmentStyles?.color2}`}}>
-                <div className={styles.menuCategoryItemCart}>
+                <div className={styles.menuCategoryItemCart} onClick={()=>setModalDescriptionVisibale(true)}>
                   <div className={styles.up}   
                     style={{ height: establishmentStyles?.showImg ? '229px' : '40px' }}>
                     {establishmentStyles?.showImg ? (
@@ -240,8 +258,7 @@ const MenuCategoryItems: React.FC = () => {
       </Button>
       
 
-      <Modal styles={{body: {backgroundColor: `#${establishmentStyles?.color1}`, width: 260 } , 
-                                          content: {backgroundColor: `#${establishmentStyles?.color1}`, width: '306px' , margin: 'auto'}
+      <Modal styles={{body: {backgroundColor: `#${establishmentStyles?.color1}`, width: 260 } , content: {backgroundColor: `#${establishmentStyles?.color1}`, width: '306px' , margin: 'auto'}
         }} open={modalDescriptionVisibale} onCancel={() => {setModalDescriptionVisibale(false); }}footer={null} >
         <Card color={`#${establishmentStyles?.color2}`} cover={newItem.img && <img alt="" src={newItem.img} />}  style={{ width: 260, color: `#${establishmentStyles?.color2}` , background: 'none' , borderColor: `#${establishmentStyles?.color2}` }}>
           <Meta title={

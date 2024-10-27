@@ -83,7 +83,7 @@ const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userI
               </div>
             </div>
           ))}
-          <Button type="primary" onClick={handleSaveOrder}>
+          <Button type="primary" style={{marginTop: '10px'}} onClick={handleSaveOrder}>
             Save Order
           </Button>
         </div>

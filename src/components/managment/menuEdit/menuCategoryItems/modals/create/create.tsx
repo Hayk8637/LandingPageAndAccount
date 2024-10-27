@@ -38,10 +38,11 @@ const Create: React.FC<IAddProps> = ({
   const inputRef = useRef<InputRef | null>(null); 
   useEffect(() => {
     if (isModalVisible && inputRef.current) {
-        inputRef.current.focus();
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }); 
     }
-}, [isModalVisible]);
-
+  }, [isModalVisible]);
   const handleNewItemSubmit = async () => {
     if (!userId || !establishmentId) {
       message.error('');
@@ -110,6 +111,7 @@ const Create: React.FC<IAddProps> = ({
         <Form.Item label="Item Name" required>
           <Input
             placeholder="Item Name"
+            maxLength={21}
             ref={inputRef}
             value={newItem.name?.[currentLanguage] || ''}
             onChange={(e) =>
@@ -126,7 +128,6 @@ const Create: React.FC<IAddProps> = ({
         <Form.Item label="Item description">
           <Input
             placeholder="Item Description"
-            ref={inputRef}
             value={newItem.description?.[currentLanguage] || ''}
             onChange={(e) =>
               setNewItem({

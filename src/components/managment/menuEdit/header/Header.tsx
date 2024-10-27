@@ -255,6 +255,7 @@ const Header: React.FC = () => {
           <select
             className={styles.languageCheck}
             style={{
+              cursor: 'pointer',
               background: 'none',
               border: 'none',
               color: `#${establishmentStyles?.color2}`,
@@ -279,7 +280,6 @@ const Header: React.FC = () => {
               ))}
           </select>
         ) : null}
-
             <Popover placement="bottomRight" content={popoverContent} arrow color={`#${establishmentStyles?.color1}`}> 
               <Button type="link" className={styles.info} 
                style={{ color: textColor }}

@@ -140,16 +140,23 @@ const Establishments: React.FC = () => {
         {establishments.map((establishment) => (
           <div className={styles.establishmentContainer} key={establishment.id}>
             <a className={styles.link} href={`/profile/establishments/${establishment.id}`}>
-              <Button className={styles.establishmentButton}>
-                <span>
-                  <img
-                    src={establishment.info.logoUrl}
-                    alt="Establishment Logo"
-                    className={styles.logoImage}
-                    style={{ objectFit: 'contain' }}
-                  />
-                </span>
-              </Button>
+            <Button className={styles.establishmentButton}>
+  <span>
+    {establishment.info.logoUrl ? (
+      <img
+        src={establishment.info.logoUrl}
+        alt={establishment.info.name || "Establishment Logo"}
+        className={styles.logoImage}
+        style={{ objectFit: 'contain' }}
+      />
+    ) : (
+      <span className={styles.fallbackName}>
+        {establishment.info.name || "Unnamed Establishment"}
+      </span>
+    )}
+  </span>
+</Button>
+
             </a>
             <Popover
               content={

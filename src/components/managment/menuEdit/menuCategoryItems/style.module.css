@@ -20,6 +20,7 @@
     border-radius: 10px;
     box-shadow: 1px #636363;
     background: none;
+    cursor: pointer;
 }
 
 .menuCategoryItems > .menuCategoryItemsList > .menuCategoryItem > .menuCategoryItemCart {

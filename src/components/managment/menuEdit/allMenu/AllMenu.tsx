@@ -79,7 +79,7 @@ const AllMenu: React.FC = () => {
       }
     };
     fetchMenuItems();
-  }, [userId,establishmentId , isEditModalVisible , isModalVisible , orderModalVisible]);
+  }, [userId,establishmentId ]);
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -176,6 +176,7 @@ const AllMenu: React.FC = () => {
           className={style.menuCategoryItem}
           style={{
             backgroundColor: `#${establishmentStyles?.color4}`,
+            border: `1px solid #${establishmentStyles?.color2}`,
             backgroundImage: establishmentStyles?.showImg ? `url(${item.imgUrl || ''})` : 'none',
           }}
           onClick={(e) => {
@@ -185,12 +186,12 @@ const AllMenu: React.FC = () => {
             }
           }}
         >
-          <a href={`./${item.id}`}>{item.name[currentLanguage]}</a>
+          <a href={`./${item.id}`} style={{color: `#${establishmentStyles?.color2}`}}>{item.name[currentLanguage]}</a>
           <Popover content={popoverContent(item)} trigger="hover" 
           open={visiblePopoverId === item.id}
           onOpenChange={(visible) => setVisiblePopoverId(visible ? item.id! : null)}
           placement="topRight">
-            <span className={style.functions} onClick={(e) =>{ e.stopPropagation()}}>
+            <span className={style.functions}  onClick={(e) =>{ e.stopPropagation()}}>
               <EditOutlined />
             </span>
           </Popover>

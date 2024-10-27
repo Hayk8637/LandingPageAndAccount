@@ -131,6 +131,7 @@ const HeaderMenu: React.FC = () => {
           <select
             className={styles.languageCheck}
             style={{
+              cursor: 'pointer',
               background: 'none',
               border: 'none',
               color: `#${establishmentStyles?.color2}`,
