@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Button } from 'antd';
 import { doc, getDoc } from 'firebase/firestore';
 import styles from './style.module.css';
 import { db } from '../../../../firebaseConfig';
@@ -70,7 +71,7 @@ const MenuCategoryNavigation: React.FC = () => {
   return (
     <div className={styles.menuCategoryNavigation} style={{backgroundColor: `#${establishmentStyles?.color1}`}}>
       {categories.map((category) => ( 
-        <a
+        <Button
           key={category.id}
           href={`/profile/establishments/${establishmentId}/${category.id}`} 
           className={currentCategoryName === category.id ? styles.activeTab : styles.a} 
@@ -78,7 +79,7 @@ const MenuCategoryNavigation: React.FC = () => {
                    backgroundColor: currentCategoryName === category.id ? `#${establishmentStyles?.color2}` : ``,
                    borderColor: currentCategoryName === category.id ? `` : `#${establishmentStyles?.color2}`}}>
           {category.name[currentLanguage]}
-        </a>
+        </Button>
       ))}
     </div>
   );

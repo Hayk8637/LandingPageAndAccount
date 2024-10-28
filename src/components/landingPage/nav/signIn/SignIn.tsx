@@ -5,6 +5,7 @@ import style from './style.module.css';
 import { auth, googleProvider } from '../../../../firebaseConfig';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
+import logo from '../../../../assets/logo/logo.png'
 
 interface SignInProps {
   isModalVisible: boolean;
@@ -54,7 +55,7 @@ const SignIn: React.FC<SignInProps> = ({ isModalVisible, onClose, onForgotPasswo
       centered
     >
       <div className={style.logo}>
-        <img src="/logo/logo.png" alt="Logo" width={200} height={50} />
+        <img src={logo} alt="Logo" width={200} height={50} />
       </div>
       <Form
         name="signInForm"
@@ -99,7 +100,7 @@ const SignIn: React.FC<SignInProps> = ({ isModalVisible, onClose, onForgotPasswo
         </Button>
       </div>
       <div className={style.forgotPassword}>
-        <a href='/' onClick={() => { onClose(); onForgotPassword(); }}>{t(('forgotPassword'))}</a>
+        <Button  type='link' onClick={() => { onClose(); onForgotPassword(); }}>{t(('forgotPassword'))}</Button>
       </div>
     </Modal>
   );

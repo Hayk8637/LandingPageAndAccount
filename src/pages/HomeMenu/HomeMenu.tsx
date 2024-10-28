@@ -9,7 +9,7 @@ const HomeMenu: React.FC = () => {
   return (
     <div className="home">
       <Header />
-      <Banner/>
+      <Banner />
       <AllMenu />
     </div>
   );

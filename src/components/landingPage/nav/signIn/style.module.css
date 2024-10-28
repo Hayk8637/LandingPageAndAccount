@@ -8,6 +8,10 @@
   text-align: center;
   margin-bottom: 20px;
 }
+.logo > img { 
+  width: 150px;
+  height: 50px;
+}
 
 .form {
   padding: 0 40px;
@@ -77,8 +81,11 @@
   margin-bottom: 10px;
 }
 
-.forgotPassword a {
-  color: #00376b;
+.forgotPassword > Button {
+  color: #ff7700;
   font-size: 14px;
   text-decoration: none;
+}
+.forgotPassword > Button:hover {
+  color: #e65c00  !important;
 }

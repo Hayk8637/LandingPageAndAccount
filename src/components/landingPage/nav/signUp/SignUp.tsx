@@ -5,6 +5,8 @@ import style from './style.module.css';
 import { auth } from '../../../../firebaseConfig'; 
 import { createUserWithEmailAndPassword, sendEmailVerification, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
+import logo from '../../../../assets/logo/logo.png'
+
 
 interface SignUpProps {
   isModalVisible: boolean;
@@ -61,7 +63,7 @@ const SignUp: React.FC<SignUpProps> = ({ isModalVisible, onClose }) => {
       centered
     >
       <div className={style.logo}>
-        <img src="/logo/logo.png" alt="Logo" width={200} height={50} />
+        <img src={logo} alt="Logo" width={200} height={50} />
       </div>
       <Form
         name="signUpForm"

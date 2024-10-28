@@ -4,7 +4,7 @@ import style from './style.module.css';
 import { auth } from '../../../../firebaseConfig'; 
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
-
+import logo from '../../../../assets/logo/logo.png'
 interface ForgotPasswordProps {
   isModalVisible: boolean;
   onClose: () => void;
@@ -45,7 +45,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isModalVisible, onClose
       centered
     >
       <div className={style.logo}>
-        <img src="/logo/logo.png" alt="Logo" className={style.logoImage} />
+        <img src={logo} alt="Logo" className={style.logoImage} />
       </div>
       <Form
         name="forgotPasswordForm"
