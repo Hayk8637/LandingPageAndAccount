@@ -17,11 +17,11 @@ const MenuCategoryNavigation: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);  
   const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en'); 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language');
+    const savedLanguage = localStorage.getItem('menuLanguage');
     if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
       setCurrentLanguage(savedLanguage);
     } else {
-      localStorage.setItem('language', 'en');
+      localStorage.setItem('menuLanguage', 'en');
     }
   }, [currentLanguage]);
   useEffect(() => {

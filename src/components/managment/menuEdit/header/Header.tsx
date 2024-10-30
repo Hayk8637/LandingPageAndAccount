@@ -7,6 +7,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import styles from './style.module.css';
 import { useLocation } from 'react-router-dom';
 import { IEstablishment, IEstablishmentStyles, IInfoValues, ILanguages } from '../../../../interfaces/interfaces';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -31,13 +32,14 @@ const Header: React.FC = () => {
   });
   const [currentLanguage, setCurrentLanguage] = useState<string>('en');
   const { Option } = Select;
+  const { t } = useTranslation("global");
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language');
+    const savedLanguage = localStorage.getItem('menuLanguage');
     if (savedLanguage) {
       setCurrentLanguage(savedLanguage);
     } else {
-      localStorage.setItem('language', 'en');
+      localStorage.setItem('menuLanguage', 'en');
     }
   }, []);
 
@@ -55,7 +57,7 @@ const Header: React.FC = () => {
   }, [currentLanguage, languages]);
   const handleLanguageChange = (language: string) => {
     setCurrentLanguage(language);
-    localStorage.setItem('language', language);
+    localStorage.setItem('menuLanguage', language);
     window.location.reload(); 
 };
   useEffect(() => {
@@ -301,23 +303,23 @@ const Header: React.FC = () => {
       </div>
       <Modal title="Edit Establishment Info" open={isModalOpen} onCancel={closeModal} footer={null}>
         <Form form={form} onFinish={handleFormSubmit} layout="vertical">
-          <Form.Item name="wifiname" label="WiFi Name">
+          <Form.Item name="wifiname" label={t('WiFi Name')}>
             <Input />
           </Form.Item>
-          <Form.Item name="wifipass" label="WiFi Password">
+          <Form.Item name="wifipass" label={t('WiFi Password')}>
             <Input />
           </Form.Item>
-          <Form.Item name="address" label="Address">
+          <Form.Item name="address" label={t('Address')}>
             <Input />
           </Form.Item>
-          <Form.Item name="currency" label="Currency">
-            <Select placeholder="Select currency">
+          <Form.Item name="currency" label={t('Currency')}>
+            <Select placeholder={t('Select currency')}>
               <Option value="$">$</Option>
               <Option value="₽">₽</Option>
               <Option value="֏">֏</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="phone"  label="Phone"
+          <Form.Item name="phone"  label={t('Phone')}
           rules={[
             {
               pattern: /^[0-9\s+()]*$/,
@@ -326,15 +328,15 @@ const Header: React.FC = () => {
           ]}>
             <Input  type='tel'/>
           </Form.Item>
-          <Form.Item label="Upload Logo">
+          <Form.Item label={t('Upload Logo')}>
             <Upload accept="image/*" showUploadList={false} beforeUpload={handleLogoUpload} listType='picture'>
               <Button icon={<UploadOutlined />} loading={uploading}>
-                {uploading ? 'Uploading' : 'Upload Logo'}
+                {uploading ? `${t('Uploading')}` : `${t('Upload Logo')}`}
               </Button>
             </Upload>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">Submit</Button>
+            <Button type="primary" htmlType="submit">{t('Submit')}</Button>
           </Form.Item>
         </Form>
       </Modal>

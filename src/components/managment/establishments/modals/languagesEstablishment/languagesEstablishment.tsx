@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { ILanguage, ILanguages } from '../../../../../interfaces/interfaces';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../../../firebaseConfig';
+import { useTranslation } from 'react-i18next';
 
 interface ILanguagesEstablishmentProps {
     isModalVisible: boolean;
@@ -12,6 +13,7 @@ interface ILanguagesEstablishmentProps {
     userId: any;
 }
 const LanguagesEstablishment:React.FC<ILanguagesEstablishmentProps> = ({isModalVisible , onCancel , selectedLanguages , selectedEstablishmentId , userId}) => {
+  const { t } = useTranslation("global");
   useEffect(() => {
     setSelectedLanguages(selectedLanguages);
   }, [selectedLanguages]);
@@ -51,7 +53,7 @@ const LanguagesEstablishment:React.FC<ILanguagesEstablishmentProps> = ({isModalV
 
 
   return (
-    <Modal title="Languages Establishment" open={isModalVisible} onCancel={onCancel} footer={null}>
+    <Modal title={t('Languages Establishment')} open={isModalVisible} onCancel={onCancel} footer={null}>
         <Checkbox
           checked={selectedLanguagesNow.am}
           onChange={() => handleUpdateLanguages(selectedEstablishmentId , 'am') }
@@ -71,7 +73,7 @@ const LanguagesEstablishment:React.FC<ILanguagesEstablishmentProps> = ({isModalV
           Russian (RU)
         </Checkbox>
         <Button style={{ marginTop: '10px', width: '100%' }} onClick={onCancel}>
-          Cancel
+          {t('Cancel')}
         </Button>
       </Modal>
   )

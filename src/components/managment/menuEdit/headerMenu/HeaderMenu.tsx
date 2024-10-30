@@ -20,16 +20,16 @@ const HeaderMenu: React.FC = () => {
     const [languages, setLanguages] = useState< ILanguages | null>(null);
     const [currentLanguage, setCurrentLanguage] = useState<string>('en');
     useEffect(() => {
-      const savedLanguage = localStorage.getItem('language');
+      const savedLanguage = localStorage.getItem('menuLanguage');
       if (savedLanguage) {
         setCurrentLanguage(savedLanguage);
       } else {
-        localStorage.setItem('language', 'en');
+        localStorage.setItem('menuLanguage', 'en');
       }
     }, []);
     const handleLanguageChange = (language: string) => {
         setCurrentLanguage(language);
-        localStorage.setItem('language', language);
+        localStorage.setItem('menuLanguage', language);
         window.location.reload();
     };
     const [popoverData, setPopoverData] = useState<IInfoValues>({

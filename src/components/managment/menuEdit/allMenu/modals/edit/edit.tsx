@@ -5,6 +5,7 @@ import { db, storage } from '../../../../../../firebaseConfig';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { ILanguage, IMenuCategoryItem, ITranslation } from '../../../../../../interfaces/interfaces';
+import { useTranslation } from 'react-i18next';
 
 interface IEditProps {
   isModalVisible: boolean;
@@ -21,6 +22,7 @@ const Edit: React.FC<IEditProps> = ({ isModalVisible, onCancel, establishmentId,
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [menuItems, setMenuItems] = useState<IMenuCategoryItem[]>([]);
+  const { t } = useTranslation("global");
 
   useEffect(() => {
     setEditCategory(editingCategory);
@@ -96,7 +98,7 @@ const Edit: React.FC<IEditProps> = ({ isModalVisible, onCancel, establishmentId,
   };
 
   return (
-    <Modal title="Edit Category" open={isModalVisible} onCancel={onCancel} footer={null}>
+    <Modal title={t('Edit Category')} open={isModalVisible} onCancel={onCancel} footer={null}>
       <Form layout="vertical">
         <Form.Item label="Category Name" required>
           <Input value={editCategory.name[currentLanguage]}
@@ -117,13 +119,13 @@ const Edit: React.FC<IEditProps> = ({ isModalVisible, onCancel, establishmentId,
             <div style={{ marginTop: 10 }}>
               <img src={editCategory.imgUrl} alt="Uploaded" width={100} height={100} style={{ objectFit: 'cover', marginTop: 10 }}/>
               <Button icon={<DeleteOutlined />} type="link" onClick={handleRemoveImage} style={{ marginLeft: 10 }}>
-                Remove
+                {t('Remove')}
               </Button>
             </div>)}
         </Form.Item>
         <Form.Item>
           <Button type="primary" loading={uploading} onClick={handleEditSubmit}>
-            Update
+            {t('Update')}
           </Button>
         </Form.Item>
       </Form>

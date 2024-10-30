@@ -4,6 +4,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import React, { useState } from 'react'
 import { db } from '../../../../../../firebaseConfig';
 import { ILanguage, IMenuCategoryItem } from '../../../../../../interfaces/interfaces';
+import { useTranslation } from 'react-i18next';
 
 interface IItemOrderProps {
   isModalVisible: boolean;
@@ -15,7 +16,7 @@ interface IItemOrderProps {
 }
 
 const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userId , establishmentId , menuItems, currentLanguage}) => {
-
+  const { t } = useTranslation("global");
   const [menuItem, setMenuItems] = useState<IMenuCategoryItem[]>(menuItems);
   const handleMoveUp = (id: string) => {
     setMenuItems(prev => {
@@ -62,7 +63,7 @@ const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userI
     }
   };  
   return (
-    <Modal title="Change Menu Item Order" open={isModalVisible} onCancel={onCancel} footer={null}>
+    <Modal title={t('Change Menu Item Order')} open={isModalVisible} onCancel={onCancel} footer={null}>
         <div>
           {menuItem.map(item => (
             <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -84,7 +85,7 @@ const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userI
             </div>
           ))}
           <Button type="primary" style={{marginTop: '10px'}} onClick={handleSaveOrder}>
-            Save Order
+            {t('Save Order')}
           </Button>
         </div>
       </Modal>

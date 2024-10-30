@@ -12,12 +12,12 @@ import { useNavigate } from 'react-router-dom';
 import logo from  './logo.png'
 
 const Nav: React.FC = () => {
-  const { t, i18n } = useTranslation("global");
   const [isSignInModalVisible, setIsSignInModalVisible] = useState(false);
   const [isSignUpModalVisible, setIsSignUpModalVisible] = useState(false);
   const [isForgotPasswordModalVisible, setIsForgotPasswordModalVisible] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation("global");
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language');

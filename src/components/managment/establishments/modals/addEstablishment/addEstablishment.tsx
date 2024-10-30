@@ -5,6 +5,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { IEstablishment } from '../../../../../interfaces/interfaces';
 import { addDoc, collection } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { useTranslation } from 'react-i18next';
 
 interface IAddEstablishmentProps{
     isModalVisible: boolean;
@@ -15,7 +16,7 @@ interface IAddEstablishmentProps{
 const AddEstablishment:React.FC<IAddEstablishmentProps> = ({isModalVisible , onCancel , form }) => {
     const [bannerFiles, setBannerFiles] = useState<File[]>([]);
     const inputRef = useRef<InputRef | null>(null); 
-
+    const { t } = useTranslation("global");
     useEffect(() => {
       if (isModalVisible && inputRef.current) {
           inputRef.current.focus();
@@ -73,7 +74,7 @@ const AddEstablishment:React.FC<IAddEstablishmentProps> = ({isModalVisible , onC
       };
 
   return (
-    <Modal title="Add Establishment" open={isModalVisible} onCancel={onCancel} footer={null}>
+    <Modal title={t('Add Establishment')} open={isModalVisible} onCancel={onCancel} footer={null}>
         <Form form={form} layout="vertical" onFinish={handleAddEstablishment}>
           <Form.Item
             label="Establishment Name"
@@ -82,10 +83,10 @@ const AddEstablishment:React.FC<IAddEstablishmentProps> = ({isModalVisible , onC
             <Input placeholder="Enter establishment name" ref={inputRef} />
           </Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: '100%' }} >
-            Add Establishment
+            {t('Add Establishment')}
           </Button>
           <Button style={{ marginTop: '10px', width: '100%' }} onClick={onCancel}>
-            Cancel
+            {t('Cancel')}
           </Button>
         </Form>
       </Modal>

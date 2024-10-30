@@ -9,6 +9,7 @@ import AddEstablishment from './modals/addEstablishment/addEstablishment'
 import LanguagesEstablishment from './modals/languagesEstablishment/languagesEstablishment';
 import EditStyles from './modals/editStyles/editStyles';
 import QrOrLink from './modals/qrOrLink/qrOrLink';
+import { useTranslation } from 'react-i18next';
 
 const Establishments: React.FC = () => {
   const [form] = Form.useForm();
@@ -31,6 +32,8 @@ const Establishments: React.FC = () => {
   const [selectedLanguages, setSelectedLanguages] = useState({am: true, en: false, ru: false, });
   const auth = getAuth();
   const db = getFirestore();
+  const { t } = useTranslation("global");
+
   useEffect(() => {
     const auth = getAuth();
     const unsubscribeAuth = onAuthStateChanged(auth, (user:any) => {
@@ -76,7 +79,6 @@ const Establishments: React.FC = () => {
         return () => unsubscribe();
       }
     };
-  
     fetchEstablishments();
   }, [userId, db]);  
 
@@ -141,40 +143,40 @@ const Establishments: React.FC = () => {
           <div className={styles.establishmentContainer} key={establishment.id}>
             <a className={styles.link} href={`/profile/establishments/${establishment.id}`}>
             <Button className={styles.establishmentButton}>
-  <span>
-    {establishment.info.logoUrl ? (
-      <img
-        src={establishment.info.logoUrl}
-        alt={establishment.info.name || "Establishment Logo"}
-        className={styles.logoImage}
-        style={{ objectFit: 'contain' }}
-      />
-    ) : (
-      <span className={styles.fallbackName}>
-        {establishment.info.name || "Unnamed Establishment"}
-      </span>
-    )}
-  </span>
-</Button>
+              <span>
+                {establishment.info.logoUrl ? (
+                  <img
+                    src={establishment.info.logoUrl}
+                    alt={establishment.info.name || "Establishment Logo"}
+                    className={styles.logoImage}
+                    style={{ objectFit: 'contain' }}
+                  />
+                ) : (
+                  <span className={styles.fallbackName}>
+                    {establishment.info.name || "Unnamed Establishment"}
+                  </span>
+                )}
+              </span>
+            </Button>
 
             </a>
             <Popover
               content={
                 <div>
                   <Switch
-                    checkedChildren="With IMG"
-                    unCheckedChildren="Without IMG"
+                    checkedChildren={t('With IMG')}
+                    unCheckedChildren={t('Without IMG')}
                     checked={establishment.styles.showImg}
                     onChange={(checked) => handleToggleShowImg(establishment.id, checked)}
                   />
                   <Button className={styles.editButtons} onClick={() => handleStylesModalOpen(establishment.id!)}>
-                    Styles
+                    {t('Styles')}
                   </Button>
                   <Button className={styles.editButtons} onClick={() => handleLanguagesModalOpen(establishment.id!, establishment.languages)}>
-                    Languages
+                    {t('Languages')}
                   </Button>
                   <Button className={styles.editButtons} icon={<QrcodeOutlined />} onClick={() => handleQrLinkModalOpen(establishment.id!)}>
-                    QR or Link
+                    {t('QR or Link')}
                   </Button>
                   <Popconfirm
                     title="Are you sure you want to delete this establishment?"
@@ -183,7 +185,7 @@ const Establishments: React.FC = () => {
                     cancelText="No"
                   >
                     <Button className={styles.editButtons} danger icon={<DeleteOutlined />}>
-                      Delete
+                      {t('Delete')}
                     </Button>
                   </Popconfirm>
                 </div>
@@ -203,7 +205,7 @@ const Establishments: React.FC = () => {
         <Button className={styles.addEstablishments} onClick={handleModalOpen}>
           <div className={styles.content}>
             <FileAddOutlined className={styles.icons} />
-            <p>Add Establishment</p>
+            <p>{t('Add Establishment')}</p>
           </div>
         </Button>
       </div>

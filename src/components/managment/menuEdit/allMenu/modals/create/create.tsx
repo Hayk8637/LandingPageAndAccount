@@ -5,6 +5,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../../../../../firebaseConfig';
 import { useEffect, useRef, useState } from 'react';
 import { ILanguage, IMenuCategoryItem, ITranslation } from '../../../../../../interfaces/interfaces';
+import { useTranslation } from 'react-i18next';
 
 interface IAddProps {
     isModalVisible: boolean;
@@ -21,6 +22,7 @@ const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength 
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const inputRef = useRef<InputRef | null>(null); 
+    const { t } = useTranslation("global");
 
     useEffect(() => {
       if (isModalVisible && inputRef.current) {
@@ -126,12 +128,12 @@ const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength 
           </Form.Item>
           <Form.Item label="Image Upload">
               <Upload beforeUpload={handleImageUpload}  maxCount={1} listType='picture'>
-                <Button icon={<UploadOutlined />}>Upload</Button>
+                <Button icon={<UploadOutlined />}>{t('Upload')}</Button>
               </Upload>
           </Form.Item>
           <Form.Item>
               <Button type="primary" loading={uploading} onClick={handleSubmit}>
-              Create
+              {t('Create')}
               </Button>
           </Form.Item>
         </Form>

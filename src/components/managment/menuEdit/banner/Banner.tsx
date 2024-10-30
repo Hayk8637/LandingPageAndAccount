@@ -9,6 +9,7 @@ import { db, storage } from '../../../../firebaseConfig';
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { IBannerImage, IEstablishmentStyles } from '../../../../interfaces/interfaces';
+import { useTranslation } from 'react-i18next';
 
 const contentStyle: React.CSSProperties = {
   height: '200px',  
@@ -26,6 +27,7 @@ const Banner: React.FC = () => {
   const establishmentId = pathname.split('/').filter(Boolean).pop() || '';
   const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
   const [userId, setUserId] = useState<string | null>(null);
+  const { t } = useTranslation("global");
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -189,7 +191,7 @@ const Banner: React.FC = () => {
         </div>
       )}
 
-      <Modal title="Manage Banners" open={isModalVisible} onCancel={handleCancel} footer={null}>
+      <Modal title={t('Manage Banners')} open={isModalVisible} onCancel={handleCancel} footer={null}>
         <List
           itemLayout="horizontal"
           dataSource={bannerImages}
@@ -202,7 +204,7 @@ const Banner: React.FC = () => {
           )}
         />
         <Upload beforeUpload={handleUpload} showUploadList={false}>
-          <Button icon={<UploadOutlined />}>Upload New Banner</Button>
+          <Button icon={<UploadOutlined />}>{t('Upload New Banner')}</Button>
         </Upload>
       </Modal>
     </div>

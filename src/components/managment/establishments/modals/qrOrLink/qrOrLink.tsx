@@ -2,6 +2,7 @@ import { Button, Modal, notification, QRCode } from 'antd';
 import React, { useRef } from 'react';
 import styles from '../../style.module.css';
 import * as htmlToImage from 'html-to-image';
+import { useTranslation } from 'react-i18next';
 
 interface IQrOrLinkProps {
   isModalVisible: boolean;
@@ -12,6 +13,7 @@ interface IQrOrLinkProps {
 
 const QrOrLink: React.FC<IQrOrLinkProps> = ({ isModalVisible, onCancel, selectedEstablishmentId, userId }) => {
   const qrRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation("global");
 
   const handleCopyLink = () => {
     const linkToCopy = `https://menu.menubyqr.com/${userId}/${selectedEstablishmentId}`;
@@ -42,7 +44,7 @@ const QrOrLink: React.FC<IQrOrLinkProps> = ({ isModalVisible, onCancel, selected
   };
 
   return (
-    <Modal title="QR or Link" open={isModalVisible} onCancel={onCancel} footer={null}>
+    <Modal title={t('QR or Link')} open={isModalVisible} onCancel={onCancel} footer={null}>
       {selectedEstablishmentId && (
         <div className={styles.qrlink}>
           <div className={styles.qr} ref={qrRef}>
@@ -52,18 +54,17 @@ const QrOrLink: React.FC<IQrOrLinkProps> = ({ isModalVisible, onCancel, selected
               value={`https://menu.menubyqr.com/${userId}/${selectedEstablishmentId}`}
             />
             <Button type="default" className={styles.qrlinkbutton} onClick={handleDownloadQrCode} style={{ marginLeft: '8px' , marginTop: '10px' }}>
-              Download QR Code
+              {t('Download QR Code')}
             </Button>
           </div>
           <div className={styles.link}>
-            <p>QR Link:</p>
+            <p>{t('QR Link')}:</p>
             <a className={styles.linklink} href={`https://menu.menubyqr.com/${userId}/${selectedEstablishmentId}`}>
               {`https://menu.menubyqr.com/${userId}/${selectedEstablishmentId}`}
             </a>
             <Button type="primary" className={styles.qrlinkbutton} onClick={handleCopyLink}>
-              Copy Menu Link
+              {t('Copy Menu Link')}
             </Button>
-            
           </div>
         </div>
       )}

@@ -10,6 +10,7 @@ import { IEstablishmentStyles, ILanguage, IMenuCategoryItem, ITranslation } from
 import Create from './modals/create/create';
 import ItemOrder from './modals/itemOrder/itemOrder';
 import Edit from './modals/edit/edit';
+import { useTranslation } from 'react-i18next';
 
 const AllMenu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<IMenuCategoryItem[]>([]);
@@ -26,13 +27,14 @@ const AllMenu: React.FC = () => {
   const inputRef = useRef<InputRef | null>(null); 
   const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
   const [visiblePopoverId , setVisiblePopoverId] =  useState<string | null>(null);
-  
+  const { t } = useTranslation("global");
+
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language');
+    const savedLanguage = localStorage.getItem('menuLanguage');
     if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
       setCurrentLanguage(savedLanguage);
     } else {
-      localStorage.setItem('language', 'en');
+      localStorage.setItem('menuLanguage', 'en');
     }
   }, [currentLanguage]);
   
@@ -157,7 +159,7 @@ const AllMenu: React.FC = () => {
   const popoverContent = (item: IMenuCategoryItem) => (
     <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'center' }}>
       <div style={{ marginBottom: 8 }}>
-        <Switch checkedChildren="show" unCheckedChildren="don't show" checked={item.isVisible} onChange={(checked) => handleToggleVisibility(item.id, checked)} />
+        <Switch checkedChildren={t('show')} unCheckedChildren={t(`don't show`)} checked={item.isVisible} onChange={(checked) => handleToggleVisibility(item.id, checked)} />
       </div>
       <Button onClick={(e) => { e.stopPropagation(); showEditModal(item); setVisiblePopoverId(null) }} style={{ marginBottom: 8 }}>Edit</Button>
       <Button onClick={(e) => { e.stopPropagation(); handleDeleteConfirmation(item.id); }}>Delete</Button>

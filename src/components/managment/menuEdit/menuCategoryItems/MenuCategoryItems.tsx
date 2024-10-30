@@ -11,6 +11,7 @@ import { IEstablishmentStyles, ILanguage, IMenuCategoryItems, ITranslation } fro
 import Create from './modals/create/create';
 import Edit from './modals/edit/edit';
 import ItemOrder from './modals/itemOrder/itemOrder';
+import { useTranslation } from 'react-i18next';
 
 
 const MenuCategoryItems: React.FC = () => {
@@ -38,13 +39,14 @@ const MenuCategoryItems: React.FC = () => {
   const categoryId = pathname.split('/')[pathname.split('/').length - 1];
   const [userId, setUserId] = useState<string | null>(null);  
   const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
-  
+  const { t } = useTranslation("global");
+
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language');
+    const savedLanguage = localStorage.getItem('menuLanguage');
     if (savedLanguage === 'en' || savedLanguage === 'am' || savedLanguage === 'ru') {
       setCurrentLanguage(savedLanguage);
     } else {
-      localStorage.setItem('language', 'en');
+      localStorage.setItem('menuLanguage', 'en');
     }
   }, [currentLanguage]);
   useEffect(()=>{},[newItem , menuItems , currentEditingId])
@@ -101,8 +103,6 @@ const MenuCategoryItems: React.FC = () => {
     fetchMenuItems();
   }, [userId, establishmentId, categoryId]);
 
-  
-
   const handleToggleVisibility = async (id: string, isVisible: boolean) => {
     setModalDescriptionVisibale(false)
     if(!userId || !establishmentId){
@@ -151,7 +151,7 @@ const MenuCategoryItems: React.FC = () => {
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ marginBottom: 8 }}>
         <Switch 
-          checkedChildren="show" unCheckedChildren="don't show"
+          checkedChildren={t(`show`)} unCheckedChildren={t(`don't show`)}
           checked={item.isVisible} 
           onChange={(checked) => handleToggleVisibility(item.id, checked)}/>
       </div>

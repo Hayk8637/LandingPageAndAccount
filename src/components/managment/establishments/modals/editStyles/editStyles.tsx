@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { IEstablishment, IEstablishmentStyles } from '../../../../../interfaces/interfaces';
 import { db } from '../../../../../firebaseConfig';
 import { doc, updateDoc } from 'firebase/firestore';
+import { useTranslation } from 'react-i18next';
 interface IEditStylesProps {
     isModalVisible: boolean;
     onCancel: () => void;
@@ -11,6 +12,7 @@ interface IEditStylesProps {
     userId: any;
 }
 const EditStyles:React.FC<IEditStylesProps> = ({isModalVisible , onCancel , selectedColors , selectedEstablishmentId , userId}) => {
+  const { t } = useTranslation("global");
   useEffect(() => {
     setSelectedColors(selectedColors);
   }, [selectedColors]);
@@ -27,7 +29,7 @@ const EditStyles:React.FC<IEditStylesProps> = ({isModalVisible , onCancel , sele
       }
     };
   return (
-    <Modal title="Edit Styles" open={isModalVisible} onCancel={onCancel} footer={null}>
+    <Modal title={t('Edit Styles')} open={isModalVisible} onCancel={onCancel} footer={null}>
         <Form layout="vertical" onFinish={handleSaveStyles}>
           <Form.Item label="Background color for your menu.">
             <ColorPicker value={`#${selectedColors0.color1}`} onChange={(color) => handleColorChange(color.toHex(), 'color1')} />
@@ -45,7 +47,7 @@ const EditStyles:React.FC<IEditStylesProps> = ({isModalVisible , onCancel , sele
             <ColorPicker value={`#${selectedColors0.color5}`} onChange={(color) => handleColorChange(color.toHex(), 'color5')} />
           </Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-            Save Styles
+            {t('Save Style')}
           </Button>
         </Form>
       </Modal>
