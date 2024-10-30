@@ -12,6 +12,7 @@ import Create from './modals/create/create';
 import Edit from './modals/edit/edit';
 import ItemOrder from './modals/itemOrder/itemOrder';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../../translations/i18n';
 
 
 const MenuCategoryItems: React.FC = () => {
@@ -49,6 +50,12 @@ const MenuCategoryItems: React.FC = () => {
       localStorage.setItem('menuLanguage', 'en');
     }
   }, [currentLanguage]);
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language'); 
+    if (savedLanguage && i18n?.changeLanguage) {
+      i18n.changeLanguage(savedLanguage); 
+    }
+  }, []);
   useEffect(()=>{},[newItem , menuItems , currentEditingId])
   useEffect(() => {
     const auth = getAuth();

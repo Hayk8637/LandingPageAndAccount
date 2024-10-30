@@ -8,6 +8,7 @@ import styles from './style.module.css';
 import { useLocation } from 'react-router-dom';
 import { IEstablishment, IEstablishmentStyles, IInfoValues, ILanguages } from '../../../../interfaces/interfaces';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../../translations/i18n';
 
 
 
@@ -43,6 +44,15 @@ const Header: React.FC = () => {
     }
   }, []);
 
+
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language'); 
+    if (savedLanguage && i18n?.changeLanguage) {
+      i18n.changeLanguage(savedLanguage); 
+    }
+  }, []);
+
   useEffect(()=>{}, [popoverData])
   useEffect(() => {
     if (!currentLanguage) {
@@ -55,6 +65,7 @@ const Header: React.FC = () => {
       }
     }
   }, [currentLanguage, languages]);
+  
   const handleLanguageChange = (language: string) => {
     setCurrentLanguage(language);
     localStorage.setItem('menuLanguage', language);

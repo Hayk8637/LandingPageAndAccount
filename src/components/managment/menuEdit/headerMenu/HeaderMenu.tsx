@@ -6,6 +6,7 @@ import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { IEstablishment, IEstablishmentStyles, IInfoValues, ILanguages } from '../../../../interfaces/interfaces';
+import i18n from '../../../../translations/i18n';
 
 const HeaderMenu: React.FC = () => {
     var currentPath = useLocation().pathname || '';
@@ -27,6 +28,13 @@ const HeaderMenu: React.FC = () => {
         localStorage.setItem('menuLanguage', 'en');
       }
     }, []);
+    
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language'); 
+    if (savedLanguage && i18n?.changeLanguage) {
+      i18n.changeLanguage(savedLanguage); 
+    }
+  }, []);
     const handleLanguageChange = (language: string) => {
         setCurrentLanguage(language);
         localStorage.setItem('menuLanguage', language);

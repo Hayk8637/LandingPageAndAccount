@@ -6,6 +6,7 @@ import { db } from '../../../../firebaseConfig';
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { ICategory, IEstablishmentStyles, ILanguage, IMenuCategoryItem } from '../../../../interfaces/interfaces';
+import i18n from '../../../../translations/i18n';
 
 const MenuCategoryNavigation: React.FC = () => {
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -34,6 +35,12 @@ const MenuCategoryNavigation: React.FC = () => {
       }
     });
     return () => unsubscribeAuth();
+  }, []);
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language'); 
+    if (savedLanguage && i18n?.changeLanguage) {
+      i18n.changeLanguage(savedLanguage); 
+    }
   }, []);
   useEffect(() => {
     const fetchCategories = async () => {

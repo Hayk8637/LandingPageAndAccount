@@ -6,6 +6,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { ILanguage, IMenuCategoryItem, ITranslation } from '../../../../../../interfaces/interfaces';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../../../../translations/i18n';
 
 interface IEditProps {
   isModalVisible: boolean;
@@ -27,7 +28,12 @@ const Edit: React.FC<IEditProps> = ({ isModalVisible, onCancel, establishmentId,
   useEffect(() => {
     setEditCategory(editingCategory);
   }, [editingCategory]);
-
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language'); 
+    if (savedLanguage && i18n?.changeLanguage) {
+      i18n.changeLanguage(savedLanguage); 
+    }
+  }, []);
 
   const handleEditSubmit = async () => {
     if (!editCategory.name[currentLanguage]) {

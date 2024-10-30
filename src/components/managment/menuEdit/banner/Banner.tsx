@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { IBannerImage, IEstablishmentStyles } from '../../../../interfaces/interfaces';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../../translations/i18n';
 
 const contentStyle: React.CSSProperties = {
   height: '200px',  
@@ -37,6 +38,12 @@ const Banner: React.FC = () => {
     setIsModalVisible(false);
   };
 
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language'); 
+    if (savedLanguage && i18n?.changeLanguage) {
+      i18n.changeLanguage(savedLanguage); 
+    }
+  }, []);
   useEffect(() => {
     const auth = getAuth();
     

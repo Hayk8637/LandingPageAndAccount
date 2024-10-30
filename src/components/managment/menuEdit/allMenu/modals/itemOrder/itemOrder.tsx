@@ -1,10 +1,11 @@
 import { Button, message, Modal } from 'antd'
 import {CaretDownOutlined, CaretUpOutlined} from '@ant-design/icons'
 import { doc, updateDoc } from 'firebase/firestore';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { db } from '../../../../../../firebaseConfig';
 import { ILanguage, IMenuCategoryItem } from '../../../../../../interfaces/interfaces';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../../../../translations/i18n';
 
 interface IItemOrderProps {
   isModalVisible: boolean;
@@ -18,6 +19,13 @@ interface IItemOrderProps {
 const ItemOrder:React.FC <IItemOrderProps> = ({isModalVisible , onCancel , userId , establishmentId , menuItems, currentLanguage}) => {
   const { t } = useTranslation("global");
   const [menuItem, setMenuItems] = useState<IMenuCategoryItem[]>(menuItems);
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language'); 
+    if (savedLanguage && i18n?.changeLanguage) {
+      i18n.changeLanguage(savedLanguage); 
+    }
+  }, []);
+  
   const handleMoveUp = (id: string) => {
     setMenuItems(prev => {
       const index = prev.findIndex(item => item.id === id);

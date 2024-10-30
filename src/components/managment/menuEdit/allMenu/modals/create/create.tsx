@@ -6,6 +6,7 @@ import { db, storage } from '../../../../../../firebaseConfig';
 import { useEffect, useRef, useState } from 'react';
 import { ILanguage, IMenuCategoryItem, ITranslation } from '../../../../../../interfaces/interfaces';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../../../../translations/i18n';
 
 interface IAddProps {
     isModalVisible: boolean;
@@ -29,7 +30,12 @@ const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength 
           inputRef.current.focus();
       }
   }, [isModalVisible]);
-
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language'); 
+    if (savedLanguage && i18n?.changeLanguage) {
+      i18n.changeLanguage(savedLanguage); 
+    }
+  }, []);
     const handleSubmit = async () => {
       if (!newCategory.name[currentLanguage].trim()) {
         message.error('');

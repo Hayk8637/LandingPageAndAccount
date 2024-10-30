@@ -11,6 +11,7 @@ import Create from './modals/create/create';
 import ItemOrder from './modals/itemOrder/itemOrder';
 import Edit from './modals/edit/edit';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../../../translations/i18n';
 
 const AllMenu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<IMenuCategoryItem[]>([]);
@@ -26,8 +27,10 @@ const AllMenu: React.FC = () => {
   const establishmentId = pathname.split('/').filter(Boolean).pop() || '';
   const inputRef = useRef<InputRef | null>(null); 
   const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
+
   const [visiblePopoverId , setVisiblePopoverId] =  useState<string | null>(null);
-  const { t } = useTranslation("global");
+  const { t  } = useTranslation("global");
+
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('menuLanguage');
@@ -37,6 +40,12 @@ const AllMenu: React.FC = () => {
       localStorage.setItem('menuLanguage', 'en');
     }
   }, [currentLanguage]);
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language'); 
+    if (savedLanguage && i18n?.changeLanguage) {
+      i18n.changeLanguage(savedLanguage); 
+    }
+  }, []);
   
   useEffect(() => {
     if (isModalVisible && inputRef.current) {
@@ -161,8 +170,8 @@ const AllMenu: React.FC = () => {
       <div style={{ marginBottom: 8 }}>
         <Switch checkedChildren={t('show')} unCheckedChildren={t(`don't show`)} checked={item.isVisible} onChange={(checked) => handleToggleVisibility(item.id, checked)} />
       </div>
-      <Button onClick={(e) => { e.stopPropagation(); showEditModal(item); setVisiblePopoverId(null) }} style={{ marginBottom: 8 }}>Edit</Button>
-      <Button onClick={(e) => { e.stopPropagation(); handleDeleteConfirmation(item.id); }}>Delete</Button>
+      <Button onClick={(e) => { e.stopPropagation(); showEditModal(item); setVisiblePopoverId(null) }} style={{ marginBottom: 8 }}>{t('Edit')}</Button>
+      <Button onClick={(e) => { e.stopPropagation(); handleDeleteConfirmation(item.id); }}>{t('Delete')}</Button>
     </div>
   );
 

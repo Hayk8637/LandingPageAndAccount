@@ -158,7 +158,6 @@ const Establishments: React.FC = () => {
                 )}
               </span>
             </Button>
-
             </a>
             <Popover
               content={
