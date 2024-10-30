@@ -71,15 +71,23 @@ const MenuCategoryNavigation: React.FC = () => {
   return (
     <div className={styles.menuCategoryNavigation} style={{backgroundColor: `#${establishmentStyles?.color1}`}}>
       {categories.map((category) => ( 
-        <Button
-          key={category.id}
-          href={`/profile/establishments/${establishmentId}/${category.id}`} 
-          className={currentCategoryName === category.id ? styles.activeTab : styles.a} 
-          style={{ color: currentCategoryName === category.id ? `#${establishmentStyles?.color1}` : `#${establishmentStyles?.color2}`,
-                   backgroundColor: currentCategoryName === category.id ? `#${establishmentStyles?.color2}` : ``,
-                   borderColor: currentCategoryName === category.id ? `` : `#${establishmentStyles?.color2}`}}>
-          {category.name[currentLanguage]}
-        </Button>
+         <Button
+            key={category.id}
+            href={`/profile/establishments/${establishmentId}/${category.id}`}
+            className={currentCategoryName === category.id ? styles.activeTab : styles.a}
+            style={{
+              color: currentCategoryName === category.id
+                ? `#${establishmentStyles?.color1}`
+                : `#${establishmentStyles?.color2}`,
+              backgroundColor: currentCategoryName === category.id
+                ? `#${establishmentStyles?.color2}`
+                : `#${establishmentStyles?.color1}`,
+              borderColor: currentCategoryName === category.id
+                ? `#${establishmentStyles?.color1}`
+                : `#${establishmentStyles?.color2}`,
+            }}>
+            {category.name[currentLanguage]}
+       </Button>
       ))}
     </div>
   );

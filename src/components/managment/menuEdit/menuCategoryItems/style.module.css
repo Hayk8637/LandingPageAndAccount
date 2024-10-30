@@ -1,9 +1,9 @@
 .menuCategoryItems {
     width: 100%;
     max-width: 400px;
-    margin-top: 143px;
+    margin-top: 137px;
     padding-bottom: 84px;
-    min-height: calc(100vh - 227px);
+    min-height: calc(100vh - 221px);
 }
 .menuCategoryItems > .menuCategoryItemsList {
     margin: auto;

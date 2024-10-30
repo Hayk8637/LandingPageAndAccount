@@ -10,7 +10,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { IEstablishmentStyles, ILanguage, IMenuCategoryItems, ITranslation } from '../../../../interfaces/interfaces';
 import Create from './modals/create/create';
 import Edit from './modals/edit/edit';
-import ItemOrder from './modals/itenOrder/itemOrder';
+import ItemOrder from './modals/itemOrder/itemOrder';
 
 
 const MenuCategoryItems: React.FC = () => {

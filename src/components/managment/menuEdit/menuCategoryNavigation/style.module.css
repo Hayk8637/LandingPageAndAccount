@@ -14,7 +14,6 @@
 .menuCategoryNavigation > .a, 
 .menuCategoryNavigation > .activeTab {
     display: inline-block; 
-    padding: 9px 22px;
     border-radius: 6px;
     text-decoration: none;
     margin-right: 10px;
@@ -23,13 +22,16 @@
     cursor: pointer;
 }
 
+
 .menuCategoryNavigation > .a {
     border: 1px solid #B3B3B3;
     margin-left: 10px;
+
 }
 
 .menuCategoryNavigation > .activeTab {
     color: #FFFFFF;
     background-color: #FF8E25;
     border: none;
+
 }
