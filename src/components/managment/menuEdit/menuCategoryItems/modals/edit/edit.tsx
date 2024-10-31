@@ -58,7 +58,7 @@ const Edit: React.FC<IEditProps> = ({
   }, [isModalVisible, currentItem]);
 
   const handleEditItemSubmit = async () => {
-    if (!currentItemId || !currentItem.order  || !newItem.name?.en || !newItem.name?.ru || !newItem.name?.am || !newItem.price || !userId || !establishmentId) {
+    if (!currentItemId  || !newItem.name?.en || !newItem.name?.ru || !newItem.name?.am || !newItem.price || !userId || !establishmentId) {
       message.error('1');
       return;
     }
@@ -90,7 +90,7 @@ const Edit: React.FC<IEditProps> = ({
           description: updatedDescription,
           price: newItem.price,
           img: imageUrl,
-          order:currentItem.order
+          order: currentItem.order
         },
       });
       message.success('2');
