@@ -1,0 +1,12 @@
+.subCategory{
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 0px;
+}
+.flex{
+    padding: 10px;
+}
+.flex > span {
+    margin-top: 5px;
+    height: 100%;
+}

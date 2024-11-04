@@ -1,9 +1,9 @@
 .menuCategoryItems {
     width: 100%;
     max-width: 400px;
-    margin-top: 137px;
-    padding-bottom: 84px;
-    min-height: calc(100vh - 221px);
+    padding-bottom: 20px;
+    margin-top: 107px;
+    min-height: calc(100vh - 128px);
 }
 .menuCategoryItems > .menuCategoryItemsList {
     margin: auto;
@@ -29,21 +29,28 @@
     position: relative;
 }
 .menuCategoryItems > .menuCategoryItemsList > .menuCategoryItem > .menuCategoryItemCart > .up {
-    height: 229px;
+    height: 195px;
+    width: 100%;
+    padding-left: 4px;
 }
 .menuCategoryItems > .menuCategoryItemsList > .menuCategoryItem > .menuCategoryItemCart > .up >a {
     width: 100%;
     text-decoration: none;
 }
-.menuCategoryItems > .menuCategoryItemsList > .menuCategoryItem > .menuCategoryItemCart > .up > a > .itemImg {
+ .itemImg {
     border-radius: 3px;
-    background-color: #F8F8F8;
+    background-color: none;
     width: 90%;
     height: 154px;
     display: flex;
     justify-content: center;
-    width: 150px;
+    /* width: 150px; */
     height: 150px;
+}
+.itemImg > img {
+    width: 100%;
+    height: 150px;
+    margin: auto;
 }
 .menuCategoryItems > .menuCategoryItemsList > .menuCategoryItem > .menuCategoryItemCart > .up >a > .itemName {
     /* height: 36px; */
@@ -91,7 +98,7 @@
 .ordering {
     text-align: right;
     padding-right: 22px;
-    padding-top: 5px;
+    /* padding-top: 5px; */
 }
 .ordering > .orderButton {
     color: white !important;

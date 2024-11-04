@@ -7,12 +7,13 @@ import styles from './style.module.css';
 import defimg from '../../../../assets/img/pngwi.png'
 import { useLocation } from 'react-router-dom';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { IEstablishmentStyles, ILanguage, IMenuCategoryItems, ITranslation } from '../../../../interfaces/interfaces';
+import { IEstablishmentStyles, ILanguage, IMenuCategoryItems, ISubCategory, ITranslation } from '../../../../interfaces/interfaces';
 import Create from './modals/create/create';
 import Edit from './modals/edit/edit';
 import ItemOrder from './modals/itemOrder/itemOrder';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../../../translations/i18n';
+import SubCategory from '../subCategory/subCategory';
 
 
 const MenuCategoryItems: React.FC = () => {
@@ -22,13 +23,14 @@ const MenuCategoryItems: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDescriptionVisibale , setModalDescriptionVisibale] = useState(false);
   const  [editModalvisibal , setEditModalVisible] = useState(false);
-  const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & {id: any, name: ITranslation, description: ITranslation  , img?: string | null, order: number , isVisible: boolean }>({ 
+  const [newItem, setNewItem] = useState<Partial<IMenuCategoryItems> & {id: any, name: ITranslation, description: ITranslation  , img?: string | null, order: number , isVisible: boolean, subCategory: ISubCategory }>({ 
     name: { en: '', am: '', ru: '' },
     description: { en: '', am: '', ru: '' },
     img: null,
     order: 0,
     isVisible: true,
-    id: ''
+    id: '',
+    subCategory: {id: '', name: { en: '', am: '', ru: '' } , order: 0}
   }); 
   const { Meta } = Card;
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
@@ -41,6 +43,8 @@ const MenuCategoryItems: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);  
   const [currentLanguage, setCurrentLanguage] = useState<ILanguage>('en');
   const { t } = useTranslation("global");
+  const [showImg, setShowImg] = useState<boolean>(true);
+
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('menuLanguage');
@@ -72,7 +76,7 @@ const MenuCategoryItems: React.FC = () => {
   }, []);
   useEffect(() => {
     const fetchMenuItems = async () => {
-      if (userId && establishmentId) {
+      if (userId && establishmentId && categoryId) {
         try {
           const docRef = doc(db, 'users', userId, 'establishments', establishmentId);
           const docSnap = await getDoc(docRef);
@@ -81,7 +85,12 @@ const MenuCategoryItems: React.FC = () => {
             const data = docSnap.data();
             const menuItems = data.menu?.items || {};
             const categoryItems = menuItems[categoryId] || {};
-            setCurrency(data.info.currency)
+            
+            setCurrency(data.info.currency);
+            setEstablishmentStyles(data.styles);
+
+            const category = data.menu.categories?.[categoryId];
+            setShowImg(category?.showImg || false);
             const items: IMenuCategoryItems[] = Object.entries(categoryItems).map(
               ([id, menuItem]: any) => ({
                 id,
@@ -91,18 +100,16 @@ const MenuCategoryItems: React.FC = () => {
                 order: menuItem.order,
                 price: menuItem.price,
                 isVisible: menuItem.isVisible ?? true,
+                subCategory: menuItem.subCategory
               })
             );
             items.sort((a, b) => a.order - b.order);
             setMenuItems(items);
-            setEstablishmentStyles(data.styles)
-            setCurrency(data.information.currency);
           } else {
-            setError('');
+            setError('No data found');
           }
         } catch (error) {
-          setError('');
-        } finally {
+          setError('Error fetching data');
         }
       }
     };
@@ -174,7 +181,8 @@ const MenuCategoryItems: React.FC = () => {
             price: item.price,
             img: item.img,
             order: item.order,
-            isVisible: item.isVisible
+            isVisible: item.isVisible,
+            subCategory: item.subCategory
           });
           setEditModalVisible(true); 
         }} 
@@ -203,13 +211,13 @@ const MenuCategoryItems: React.FC = () => {
     setOrderModalVisible(false)
     setModalDescriptionVisibale(false)
     setCurrentEditingId(null);
-  }
-  
+  }  
   return (
     <div className={styles.menuCategoryItems} style={{backgroundColor: `#${establishmentStyles?.color1}` }}>
       <div className={styles.ordering}>
         <Button type="link" className={styles.orderButton} onClick={showOrderModal}><OrderedListOutlined /></Button>
       </div>
+      <SubCategory/>
       <div className={styles.menuCategoryItemsList}>
         {menuItems.length > 0 ? (
             menuItems.map((item) => (
@@ -222,19 +230,18 @@ const MenuCategoryItems: React.FC = () => {
                   price: item.price,
                   img: item.img,
                   order: item.order,
-                  isVisible: item.isVisible
+                  isVisible: item.isVisible,
+                  subCategory: item.subCategory
                 });
               }} style={{border: `1px solid #${establishmentStyles?.color2}`}}>
                 <div className={styles.menuCategoryItemCart} onClick={()=>setModalDescriptionVisibale(true)}>
                   <div className={styles.up}   
-                    style={{ height: establishmentStyles?.showImg ? '229px' : '40px' }}>
-                    {establishmentStyles?.showImg ? (
+                    style={{ height: (establishmentStyles?.showImg && showImg ) ? '195px' : '40px' }}>
+                    {(establishmentStyles?.showImg && showImg )? (
                     <div className={styles.itemImg}>
                       <img
                         src={item.img || defimg}
                         alt={item.name[currentLanguage]}
-                        width={150}
-                        height={150}
                       />
                     </div>
                      ) : null}

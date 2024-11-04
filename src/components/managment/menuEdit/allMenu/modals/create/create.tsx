@@ -19,7 +19,7 @@ interface IAddProps {
 
 const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength , establishmentId , userId, currentLanguage}) => {
     const [ , setMenuItems] = useState<IMenuCategoryItem[]>([]);
-    const [newCategory, setNewCategory] = useState<{ name: ITranslation, imgUrl: string | null , order: number }>({ name: { en:'' ,am: '' , ru:''  }, imgUrl: null , order: 0});
+    const [newCategory, setNewCategory] = useState<{ name: ITranslation, imgUrl: string | null , order: number , showImg: boolean }>({ name: { en:'' ,am: '' , ru:''  }, imgUrl: null , order: 0, showImg: false});
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
     const inputRef = useRef<InputRef | null>(null); 
@@ -81,6 +81,7 @@ const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength 
             },
             imgUrl: imgUrl || null,
             isVisible: true,
+            showImg: false,
             order: menuItemsLength+1
           },
         });
@@ -100,7 +101,9 @@ const Create:React.FC<IAddProps> = ({isModalVisible , onCancel, menuItemsLength 
             },
             imgUrl,
             isVisible: true,
-            order: menuItemsLength
+            order: menuItemsLength,
+            showImg: true,
+            subCategory: []
           }
         ]);
   

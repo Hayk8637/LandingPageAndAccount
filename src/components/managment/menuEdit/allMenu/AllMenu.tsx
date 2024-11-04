@@ -17,7 +17,7 @@ const AllMenu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<IMenuCategoryItem[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [newCategory, setNewCategory] = useState<{ name: ITranslation, imgUrl: string | null , order: number }>({ name: { en:'' ,am: '' , ru:''  }, imgUrl: null , order: 0});
+  const [newCategory, setNewCategory] = useState<{ name: ITranslation, imgUrl: string | null , order: number, showImg: boolean }>({ name: { en:'' ,am: '' , ru:''  }, imgUrl: null , order: 0, showImg: false});
   const [currentEditingId, setCurrentEditingId] = useState<string | null>(null);
   const [orderModalVisible, setOrderModalVisible] = useState(false);
   const [establishmentStyles, setEstablishmentStyles] = useState<IEstablishmentStyles>();
@@ -79,6 +79,8 @@ const AllMenu: React.FC = () => {
               order: category.order,
               imgUrl: category.imgUrl,
               isVisible: category.isVisible ?? true,
+              showImg: category.showImg ?? true,
+              subCategory: category.subCategory
             }));
             await setEstablishmentStyles(data.styles);
             items.sort((a, b) => a.order - b.order);
@@ -104,6 +106,7 @@ const AllMenu: React.FC = () => {
         am: item.name.am,
         ru: item.name.ru,
       },
+      showImg: item.showImg,
       imgUrl: item.imgUrl,
       order: item.order,
     });
@@ -113,7 +116,7 @@ const AllMenu: React.FC = () => {
   const handleCancel = () => {
     setVisiblePopoverId(null);
     setIsModalVisible(false);
-    setNewCategory({ name: {en: '' , am: '' , ru: ''}, imgUrl: null , order: 0 });
+    setNewCategory({ name: {en: '' , am: '' , ru: ''}, imgUrl: null , order: 0, showImg:false });
     setIsEditModalVisible(false);
     setCurrentEditingId(null);
     setOrderModalVisible(false)
@@ -128,6 +131,24 @@ const AllMenu: React.FC = () => {
         const categoryRef = doc(db, 'users', userId, 'establishments', establishmentId);
         await updateDoc(categoryRef, {
           [`menu.categories.${id}.isVisible`]: isVisible,
+        });
+      } catch (error) {
+        message.error(``);
+      }
+    } else {
+      message.error('');
+    }
+  };
+  const handleToggleShowImg = async (id: string, showImg: boolean) => {
+    if (userId && establishmentId) {
+      try {
+        const updatedItems = menuItems.map(item => 
+          item.id === id ? { ...item, showImg } : item
+        );
+        setMenuItems(updatedItems);
+        const categoryRef = doc(db, 'users', userId, 'establishments', establishmentId);
+        await updateDoc(categoryRef, {
+          [`menu.categories.${id}.showImg`]: showImg,
         });
       } catch (error) {
         message.error(``);
@@ -169,6 +190,9 @@ const AllMenu: React.FC = () => {
     <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'center' }}>
       <div style={{ marginBottom: 8 }}>
         <Switch checkedChildren={t('show')} unCheckedChildren={t(`don't show`)} checked={item.isVisible} onChange={(checked) => handleToggleVisibility(item.id, checked)} />
+      </div>
+      <div style={{ marginBottom: 8 }}>
+        <Switch checkedChildren={t('With IMG')} unCheckedChildren={t(`Without IMG`)} checked={item.showImg} onChange={(checked) => handleToggleShowImg(item.id, checked)} />
       </div>
       <Button onClick={(e) => { e.stopPropagation(); showEditModal(item); setVisiblePopoverId(null) }} style={{ marginBottom: 8 }}>{t('Edit')}</Button>
       <Button onClick={(e) => { e.stopPropagation(); handleDeleteConfirmation(item.id); }}>{t('Delete')}</Button>

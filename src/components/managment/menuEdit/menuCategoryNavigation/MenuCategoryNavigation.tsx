@@ -59,6 +59,8 @@ const MenuCategoryNavigation: React.FC = () => {
                 order: category.order,
                 imgUrl: category.imgUrl,
                 isVisible: category.isVisible ?? true,
+                showImg: category.showImg ?? true,
+                subCategory: category.subCategory
               }));
                 items.sort((a, b) => a.order - b.order);
               setEstablishmentStyles(data.styles)

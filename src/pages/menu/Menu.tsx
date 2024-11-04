@@ -6,11 +6,8 @@ import './style.css'
 const Menu:React.FC = () => {
     return <>
         <div className="menu">
-            {/* <div className='header'> */}
-                <HeaderMenu/>
-                <MenuCategoryNavigation/>
-            {/* </div> */}
-            
+            <HeaderMenu/>
+            <MenuCategoryNavigation/>            
             <MenuCategoryItems />
         </div>
     </>

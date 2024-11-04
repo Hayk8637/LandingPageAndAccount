@@ -20,6 +20,11 @@ export interface ICategory {
   id: string; 
   name: ITranslation;
 }
+export interface ISubCategory {
+  id: string;
+  name: ITranslation;
+  order: number;
+}
 export interface ITranslation {
   en: string,
   am: string,
@@ -31,6 +36,8 @@ export interface IMenuCategoryItem {
   imgUrl: string | null;
   isVisible: boolean;
   order: number;
+  showImg: boolean;
+  subCategory: ISubCategory[];
 }
 export interface IMenuCategoryItems {
   id: string;
@@ -40,6 +47,7 @@ export interface IMenuCategoryItems {
   price: number;
   isVisible: boolean;
   order: number
+  subCategory: ISubCategory;
 }
 export interface IInfoValues {
   wifiname: string;
